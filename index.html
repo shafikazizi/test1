@@ -32,6 +32,10 @@
             color: white;
             box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.2);
         }
+
+        .modal-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900 overflow-hidden">
@@ -116,55 +120,20 @@
 
     <!-- Modal for adding new item -->
     <div id="modal-container" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-6 hidden">
-        <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden transform transition-all">
-            <div class="px-8 py-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+        <div class="bg-white w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden transform transition-all flex flex-col max-h-[90vh]">
+            <div class="px-8 py-6 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
                 <h3 id="modal-title" class="text-xl font-bold text-slate-900">Tambah Rekod</h3>
                 <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600">
                     <i data-lucide="x" class="w-6 h-6"></i>
                 </button>
             </div>
-            <form id="mail-form" class="p-8 space-y-5">
-                <div class="space-y-1.5">
-                    <label class="text-xs font-bold text-slate-500 uppercase">Perkara / Tajuk Surat</label>
-                    <input 
-                        id="form-title"
-                        required
-                        type="text" 
-                        placeholder="Contoh: Jemputan Mesyuarat PIBG..."
-                        class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
+            <form id="mail-form" class="p-8 space-y-5 overflow-y-auto modal-scroll">
+                <!-- Dynamic form fields based on tab -->
+                <div id="form-fields-container" class="space-y-5">
+                    <!-- Fields will be injected here -->
                 </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div class="space-y-1.5">
-                        <label id="label-origin" class="text-xs font-bold text-slate-500 uppercase">Asal / Pengirim</label>
-                        <input 
-                            id="form-origin"
-                            required
-                            type="text" 
-                            class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-                    </div>
-                    <div class="space-y-1.5">
-                        <label class="text-xs font-bold text-slate-500 uppercase">Keutamaan</label>
-                        <select 
-                            id="form-priority"
-                            class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-no-repeat bg-[right_1rem_center]"
-                        >
-                            <option value="Low">Rendah</option>
-                            <option value="Medium" selected>Sederhana</option>
-                            <option value="High">Tinggi</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="space-y-1.5">
-                    <label class="text-xs font-bold text-slate-500 uppercase">Ringkasan / Catatan</label>
-                    <textarea 
-                        id="form-description"
-                        rows="3"
-                        class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    ></textarea>
-                </div>
-                <div class="pt-4 flex space-x-4">
+                
+                <div class="pt-4 flex space-x-4 sticky bottom-0 bg-white">
                     <button 
                         type="button"
                         onclick="closeModal()"
@@ -191,17 +160,36 @@
             searchTerm: '',
             data: {
                 incomingSchool: [
-                    { id: 'SMS-001', title: 'Minit Mesyuarat Guru Bil 1/2024', sender: 'Unit Kurikulum', date: '2024-03-01', category: 'Dalaman', status: 'Processed', priority: 'Medium', description: 'Minit mesyuarat kurikulum kali pertama.' },
-                    { id: 'SMS-002', title: 'Permohonan Cuti Sakit Kakitangan', sender: 'Cikgu Ahmad', date: '2024-03-05', category: 'Sumber Manusia', status: 'Approved', priority: 'High', description: 'Surat permohonan cuti sakit 3 hari.' }
+                    { 
+                        id: 'SMS-001', 
+                        dateReceived: '2024-03-01', 
+                        schoolName: 'SMK Cyberjaya', 
+                        title: 'Minit Mesyuarat Guru Bil 1/2024', 
+                        refNumber: 'SMKC/100-1/2/1 (01) - 28/02/2024', 
+                        sector: 'Kurikulum', 
+                        officer: 'En. Razak', 
+                        status: 'Sudah diminit', 
+                        ppdNotes: 'Telah disemak oleh Unit Menengah', 
+                        registryNo: 'JPN/S/1234'
+                    }
                 ],
                 incomingExternal: [
-                    { id: 'SMJ-001', title: 'Surat Pekeliling Ikhtisas Bil 2/2024', sender: 'KPM / JPN', date: '2024-03-02', category: 'Pekeliling', status: 'Pending', priority: 'High', description: 'Pekeliling mengenai garis panduan disiplin murid.' },
-                    { id: 'SMJ-002', title: 'Tawaran Tajaan Program STEM', sender: 'Petronas Foundation', date: '2024-03-06', category: 'Tajaan', status: 'Pending', priority: 'Medium', description: 'Tawaran untuk menjalankan program STEM di sekolah.' }
+                    { id: 'SMJ-001', title: 'Surat Pekeliling Ikhtisas Bil 2/2024', sender: 'KPM / JPN', date: '2024-03-02', category: 'Pekeliling', status: 'Dalam proses', priority: 'High', description: 'Pekeliling mengenai garis panduan disiplin murid.' }
                 ],
                 outgoing: [
-                    { id: 'SK-001', title: 'Surat Jemputan Perasmian Hari Sukan', recipient: 'PPD / YDP PIBG', date: '2024-03-10', category: 'Acara', status: 'Sent', priority: 'Medium' }
+                    { id: 'SK-001', title: 'Surat Jemputan Perasmian Hari Sukan', recipient: 'PPD / YDP PIBG', date: '2024-03-10', category: 'Acara', status: 'Selesai', priority: 'Medium' }
                 ]
             }
+        };
+
+        const statusConfig = {
+            'Belum diminit': { class: 'bg-slate-100 text-slate-700', icon: 'circle-dashed' },
+            'Sudah diminit': { class: 'bg-blue-100 text-blue-700', icon: 'file-edit' },
+            'Dalam proses': { class: 'bg-amber-100 text-amber-700', icon: 'clock' },
+            'Selesai': { class: 'bg-green-100 text-green-700', icon: 'check-circle' },
+            'Dikembalikan': { class: 'bg-red-100 text-red-700', icon: 'rotate-ccw' },
+            'Pending': { class: 'bg-slate-100 text-slate-700', icon: 'clock' },
+            'Sent': { class: 'bg-indigo-100 text-indigo-700', icon: 'send' }
         };
 
         function init() {
@@ -217,48 +205,35 @@
         function toggleSidebar() {
             state.isSidebarOpen = !state.isSidebarOpen;
             const sidebar = document.getElementById('sidebar');
-            const toggleIcon = document.getElementById('sidebar-toggle-icon');
             const textElements = document.querySelectorAll('.sidebar-text');
 
             if (state.isSidebarOpen) {
                 sidebar.classList.remove('w-20');
                 sidebar.classList.add('w-64');
-                textElements.forEach(function(el) { el.classList.remove('hidden'); });
+                textElements.forEach(el => el.classList.remove('hidden'));
             } else {
                 sidebar.classList.remove('w-64');
                 sidebar.classList.add('w-20');
-                textElements.forEach(function(el) { el.classList.add('hidden'); });
+                textElements.forEach(el => el.classList.add('hidden'));
             }
             lucide.createIcons();
         }
 
         function switchTab(tabId) {
             state.activeTab = tabId;
-            document.querySelectorAll('.nav-item').forEach(function(el) { el.classList.remove('active-nav'); });
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active-nav'));
             document.getElementById('nav-' + tabId).classList.add('active-nav');
             updateView();
         }
 
-        function getBadgeClass(val) {
-            const styles = {
-                High: 'bg-red-100 text-red-700',
-                Tinggi: 'bg-red-100 text-red-700',
-                Medium: 'bg-amber-100 text-amber-700',
-                Sederhana: 'bg-amber-100 text-amber-700',
-                Low: 'bg-green-100 text-green-700',
-                Rendah: 'bg-green-100 text-green-700',
-                Pending: 'bg-slate-100 text-slate-700',
-                Processed: 'bg-blue-100 text-blue-700',
-                Approved: 'bg-emerald-100 text-emerald-700',
-                Sent: 'bg-indigo-100 text-indigo-700',
-                Draft: 'bg-gray-100 text-gray-700',
-            };
-            return 'px-2.5 py-0.5 rounded-full text-xs font-semibold ' + (styles[val] || styles.Pending);
-        }
-
-        function translateStatus(status) {
-            const map = { 'Pending': 'Dalam Proses', 'Processed': 'Telah Diproses', 'Approved': 'Diluluskan', 'Sent': 'Dihantar', 'Draft': 'Draf' };
-            return map[status] || status;
+        function renderStatusBadge(status) {
+            const config = statusConfig[status] || { class: 'bg-gray-100 text-gray-700', icon: 'help-circle' };
+            return `
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${config.class} border-current/10">
+                    <i data-lucide="${config.icon}" class="w-3 h-3 mr-1.5"></i>
+                    ${status}
+                </span>
+            `;
         }
 
         function updateView() {
@@ -276,72 +251,50 @@
         }
 
         function renderDashboard(container) {
-            const allActivities = [...state.data.incomingSchool, ...state.data.incomingExternal, ...state.data.outgoing].sort((a,b) => new Date(b.date) - new Date(a.date)).slice(0, 5);
-            
             container.innerHTML = `
                 <div class="space-y-8 animate-in fade-in duration-500">
                     <div class="flex justify-between items-end">
                         <div>
-                            <h2 class="text-2xl font-bold text-slate-900">Rumusan Sistem</h2>
-                            <p class="text-slate-500 mt-1">Pecahan surat mengikut kategori terkini</p>
+                            <h2 class="text-2xl font-bold text-slate-900">Rumusan PeD Pro</h2>
+                            <p class="text-slate-500 mt-1">Status pengurusan surat sekolah terkini</p>
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                        ${renderStatCard('Surat Sekolah', state.data.incomingSchool.length, 'school', 'Blue', 'bg-blue-600')}
-                        ${renderStatCard('Surat Luar', state.data.incomingExternal.length, 'building-2', 'Orange', 'bg-orange-600')}
-                        ${renderStatCard('Surat Keluar', state.data.outgoing.length, 'send', 'Green', 'bg-emerald-600')}
-                        ${renderStatCard('Tertunda', '14', 'clock', 'Amber', 'bg-amber-500')}
+                        ${renderStatCard('Surat Sekolah', state.data.incomingSchool.length, 'school', 'bg-blue-600')}
+                        ${renderStatCard('Surat Luar', state.data.incomingExternal.length, 'building-2', 'bg-orange-600')}
+                        ${renderStatCard('Surat Keluar', state.data.outgoing.length, 'send', 'bg-emerald-600')}
+                        ${renderStatCard('Tertunda', '14', 'clock', 'bg-amber-500')}
                     </div>
-
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                        <div class="lg:col-span-2 bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
-                            <h3 class="font-bold text-lg mb-6 flex items-center text-slate-800">
-                                <i data-lucide="clock" class="mr-2 text-blue-600 w-5 h-5"></i>
-                                Aktiviti Terkini
-                            </h3>
-                            <div class="space-y-6">
-                                ${allActivities.map(item => `
-                                    <div class="flex items-start space-x-4 border-l-2 border-slate-100 pl-4 relative">
-                                        <div class="absolute -left-[5px] top-0 w-2 h-2 rounded-full bg-blue-500"></div>
-                                        <div class="flex-1">
-                                            <div class="flex justify-between">
-                                                <h4 class="font-semibold text-slate-900 text-sm">${item.title}</h4>
-                                                <span class="text-xs text-slate-400">${item.date}</span>
-                                            </div>
-                                            <p class="text-xs text-slate-500 mt-1">${item.sender ? 'Asal: ' + item.sender : 'Kepada: ' + item.recipient}</p>
-                                            <div class="mt-2 flex space-x-2">
-                                                <span class="${getBadgeClass(item.status)}">${translateStatus(item.status)}</span>
-                                                <span class="text-[10px] uppercase font-bold text-slate-400 mt-0.5">${item.id.split('-')[0]}</span>
-                                            </div>
+                    
+                    <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+                        <h3 class="font-bold text-lg mb-6 flex items-center text-slate-800">
+                            <i data-lucide="clock" class="mr-2 text-blue-600 w-5 h-5"></i>
+                            Log Aktiviti Terkini (Sekolah)
+                        </h3>
+                        <div class="space-y-6">
+                            ${state.data.incomingSchool.slice(0, 3).map(item => `
+                                <div class="flex items-start space-x-4 border-l-2 border-slate-100 pl-4 relative">
+                                    <div class="absolute -left-[5px] top-0 w-2 h-2 rounded-full bg-blue-500"></div>
+                                    <div class="flex-1">
+                                        <div class="flex justify-between">
+                                            <h4 class="font-semibold text-slate-900 text-sm">${item.title}</h4>
+                                            <span class="text-xs text-slate-400">Diterima: ${item.dateReceived}</span>
+                                        </div>
+                                        <p class="text-xs text-slate-500 mt-1">Asal: ${item.schoolName} | No Fail: ${item.registryNo || '-'}</p>
+                                        <div class="mt-2">
+                                            ${renderStatusBadge(item.status)}
                                         </div>
                                     </div>
-                                `).join('')}
-                            </div>
-                        </div>
-
-                        <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
-                            <h3 class="font-bold text-lg mb-6 text-slate-800">Pecahan Keutamaan</h3>
-                            <div class="space-y-4">
-                                ${['Tinggi', 'Sederhana', 'Rendah'].map(p => `
-                                    <div>
-                                        <div class="flex justify-between text-sm mb-1">
-                                            <span class="font-medium text-slate-600">Keutamaan ${p}</span>
-                                            <span class="text-slate-400">33%</span>
-                                        </div>
-                                        <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-                                            <div class="h-full ${p === 'Tinggi' ? 'bg-red-500' : p === 'Sederhana' ? 'bg-amber-500' : 'bg-green-500'}" style="width: 33%"></div>
-                                        </div>
-                                    </div>
-                                `).join('')}
-                            </div>
+                                </div>
+                            `).join('')}
                         </div>
                     </div>
                 </div>
             `;
         }
 
-        function renderStatCard(title, value, icon, trend, colorClass) {
+        function renderStatCard(title, value, icon, colorClass) {
             return `
                 <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
                     <div class="flex justify-between items-start">
@@ -361,11 +314,12 @@
             let list = [];
             let title = "";
             let sub = "";
+            let isSchoolMail = state.activeTab === 'surat-masuk-sekolah';
             
-            if (state.activeTab === 'surat-masuk-sekolah') {
+            if (isSchoolMail) {
                 list = state.data.incomingSchool;
-                title = "Surat Masuk Sekolah";
-                sub = "Uruskan korespondensi dalaman antara unit dan warga sekolah.";
+                title = "Rekod Surat Masuk Sekolah";
+                sub = "Pecahan rekod mengikut Tarikh Terima, Rujukan, dan Tindakan Pegawai.";
             } else if (state.activeTab === 'surat-masuk-jabatan') {
                 list = state.data.incomingExternal;
                 title = "Surat Masuk Jabatan & Luar";
@@ -377,8 +331,9 @@
             }
 
             const filtered = list.filter(item => 
-                item.title.toLowerCase().indexOf(state.searchTerm.toLowerCase()) !== -1 ||
-                (item.sender || item.recipient).toLowerCase().indexOf(state.searchTerm.toLowerCase()) !== -1
+                (item.title && item.title.toLowerCase().indexOf(state.searchTerm.toLowerCase()) !== -1) ||
+                (item.schoolName && item.schoolName.toLowerCase().indexOf(state.searchTerm.toLowerCase()) !== -1) ||
+                (item.sender && item.sender.toLowerCase().indexOf(state.searchTerm.toLowerCase()) !== -1)
             );
 
             container.innerHTML = `
@@ -395,22 +350,56 @@
                     </div>
 
                     <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-                        <div class="px-6 py-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
-                            <span class="text-sm font-semibold text-slate-600">Total: ${filtered.length} Rekod</span>
+                        <div class="px-6 py-4 border-b border-slate-100 bg-slate-50">
+                            <span class="text-sm font-semibold text-slate-600">Jumlah Rekod: ${filtered.length}</span>
                         </div>
                         <div class="overflow-x-auto">
-                            <table class="w-full text-left whitespace-nowrap">
+                            <table class="w-full text-left whitespace-nowrap text-xs">
                                 <thead>
-                                    <tr class="bg-white text-slate-400 text-[11px] uppercase tracking-widest font-bold border-b border-slate-100">
-                                        <th class="px-6 py-4">Maklumat Dokumen</th>
-                                        <th class="px-6 py-4">Pihak Terlibat</th>
-                                        <th class="px-6 py-4">Tarikh</th>
-                                        <th class="px-6 py-4">Status</th>
-                                        <th class="px-6 py-4 text-right">Aksi</th>
+                                    <tr class="bg-white text-slate-400 uppercase tracking-widest font-bold border-b border-slate-100">
+                                        ${isSchoolMail ? `
+                                            <th class="px-4 py-4">Tarikh Terima</th>
+                                            <th class="px-4 py-4">Nama Sekolah</th>
+                                            <th class="px-4 py-4">Perkara</th>
+                                            <th class="px-4 py-4">No. Rujukan & Tarikh</th>
+                                            <th class="px-4 py-4">Sektor / Pegawai</th>
+                                            <th class="px-4 py-4">Status</th>
+                                            <th class="px-4 py-4">No Fail Jabatan</th>
+                                            <th class="px-4 py-4 text-right">Aksi</th>
+                                        ` : `
+                                            <th class="px-6 py-4">Maklumat Dokumen</th>
+                                            <th class="px-6 py-4">Pihak Terlibat</th>
+                                            <th class="px-6 py-4">Tarikh</th>
+                                            <th class="px-6 py-4">Status</th>
+                                            <th class="px-6 py-4 text-right">Aksi</th>
+                                        `}
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-slate-100">
-                                    ${filtered.map(item => `
+                                    ${filtered.map(item => isSchoolMail ? `
+                                        <tr class="hover:bg-slate-50 transition-colors group">
+                                            <td class="px-4 py-4 font-medium text-slate-900">${item.dateReceived}</td>
+                                            <td class="px-4 py-4 text-slate-700 font-semibold">${item.schoolName}</td>
+                                            <td class="px-4 py-4 text-slate-600 whitespace-normal min-w-[200px]">${item.title}</td>
+                                            <td class="px-4 py-4 text-slate-500 font-mono italic">${item.refNumber}</td>
+                                            <td class="px-4 py-4">
+                                                <div class="flex flex-col">
+                                                    <span class="font-bold text-slate-700">${item.sector}</span>
+                                                    <span class="text-slate-400">${item.officer}</span>
+                                                </div>
+                                            </td>
+                                            <td class="px-4 py-4">
+                                                ${renderStatusBadge(item.status)}
+                                            </td>
+                                            <td class="px-4 py-4 font-mono font-bold text-blue-600">${item.registryNo || '-'}</td>
+                                            <td class="px-4 py-4 text-right">
+                                                <div class="flex justify-end space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                    <button class="p-2 hover:bg-blue-50 text-blue-600 rounded-md"><i data-lucide="eye" class="w-4 h-4"></i></button>
+                                                    <button onclick="deleteItem('${item.id}')" class="p-2 hover:bg-red-50 text-red-600 rounded-md"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ` : `
                                         <tr class="hover:bg-slate-50 transition-colors group">
                                             <td class="px-6 py-4">
                                                 <div class="flex flex-col">
@@ -418,15 +407,9 @@
                                                     <span class="text-[10px] text-blue-600 font-mono font-bold">${item.id}</span>
                                                 </div>
                                             </td>
-                                            <td class="px-6 py-4 text-sm font-medium text-slate-600">
-                                                ${item.sender || item.recipient}
-                                            </td>
-                                            <td class="px-6 py-4 text-sm text-slate-500 font-medium">
-                                                ${item.date}
-                                            </td>
-                                            <td class="px-6 py-4">
-                                                <span class="${getBadgeClass(item.status)}">${translateStatus(item.status)}</span>
-                                            </td>
+                                            <td class="px-6 py-4 text-sm font-medium text-slate-600">${item.sender || item.recipient}</td>
+                                            <td class="px-6 py-4 text-sm text-slate-500 font-medium">${item.date}</td>
+                                            <td class="px-6 py-4">${renderStatusBadge(item.status)}</td>
                                             <td class="px-6 py-4 text-right">
                                                 <div class="flex justify-end space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                                     <button class="p-2 hover:bg-blue-50 text-blue-600 rounded-md"><i data-lucide="eye" class="w-4 h-4"></i></button>
@@ -438,43 +421,110 @@
                                 </tbody>
                             </table>
                         </div>
-                        ${filtered.length === 0 ? '<div class="py-20 text-center text-slate-400">Tiada rekod ditemui</div>' : ''}
                     </div>
                 </div>
             `;
         }
 
-        function renderSettings(container) {
-            container.innerHTML = `<div class="bg-white rounded-xl border border-slate-200 p-8 shadow-sm max-w-2xl mx-auto mt-10">
-                <h2 class="text-xl font-bold mb-6">Profil Sekolah</h2>
-                <div class="space-y-6">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div class="space-y-2">
-                            <label class="text-xs font-bold text-slate-400 uppercase">Nama Sekolah</label>
-                            <input type="text" value="SMK Cyberjaya" class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg outline-none" />
-                        </div>
-                        <div class="space-y-2">
-                            <label class="text-xs font-bold text-slate-400 uppercase">Kod Sekolah</label>
-                            <input type="text" value="BEA1234" class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg outline-none" />
-                        </div>
-                    </div>
-                    <button class="w-full py-3 bg-blue-600 text-white rounded-lg font-bold">Simpan Profil</button>
-                </div>
-            </div>`;
-        }
-
-        function renderEmpty(container, icon, title, desc) {
-            container.innerHTML = `<div class="flex flex-col items-center justify-center h-full text-slate-400 animate-in fade-in">
-                <div class="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mb-4 text-blue-500"><i data-lucide="${icon.toLowerCase()}" class="w-10 h-10"></i></div>
-                <h2 class="text-lg font-bold text-slate-900">${title}</h2>
-                <p class="text-sm text-slate-500 text-center max-w-xs mt-1">${desc}</p>
-            </div>`;
-        }
-
         function openModal() {
             const tab = state.activeTab;
-            document.getElementById('modal-title').innerText = 'Tambah ' + (tab === 'surat-masuk-sekolah' ? 'Surat Masuk Sekolah' : (tab === 'surat-masuk-jabatan' ? 'Surat Masuk Jabatan' : 'Surat Keluar'));
-            document.getElementById('label-origin').innerText = tab.includes('masuk') ? 'Asal / Pengirim' : 'Penerima';
+            const container = document.getElementById('form-fields-container');
+            
+            if (tab === 'surat-masuk-sekolah') {
+                document.getElementById('modal-title').innerText = 'Daftar Surat Masuk Sekolah';
+                container.innerHTML = `
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="space-y-1.5">
+                            <label class="text-xs font-bold text-slate-500 uppercase">Tarikh Terima Surat</label>
+                            <input id="form-date-received" required type="date" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none" />
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="text-xs font-bold text-slate-500 uppercase">Nama Sekolah</label>
+                            <input id="form-school-name" required type="text" placeholder="Cth: SMK Cyberjaya" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none" />
+                        </div>
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="text-xs font-bold text-slate-500 uppercase">Perkara</label>
+                        <input id="form-title" required type="text" placeholder="Cth: Minit Mesyuarat PIBG..." class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none" />
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="space-y-1.5">
+                            <label class="text-xs font-bold text-slate-500 uppercase">No. Rujukan & Tarikh</label>
+                            <input id="form-ref" required type="text" placeholder="Cth: SMKC/100-1/2 (01) - 10/02/2024" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none" />
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="text-xs font-bold text-slate-500 uppercase">Sektor</label>
+                            <select id="form-sector" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none">
+                                <option value="Kurikulum">Kurikulum</option>
+                                <option value="HEM">HEM</option>
+                                <option value="Kokurikulum">Kokurikulum</option>
+                                <option value="Pentadbiran">Pentadbiran</option>
+                                <option value="Sukan">Sukan</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="space-y-1.5">
+                            <label class="text-xs font-bold text-slate-500 uppercase">Untuk Tindakan / Nama Pegawai</label>
+                            <input id="form-officer" type="text" placeholder="Nama Pegawai" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none" />
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="text-xs font-bold text-slate-500 uppercase">Status</label>
+                            <select id="form-status" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none">
+                                <option value="Belum diminit">Belum diminit</option>
+                                <option value="Sudah diminit">Sudah diminit</option>
+                                <option value="Dalam proses">Dalam proses</option>
+                                <option value="Selesai">Selesai</option>
+                                <option value="Dikembalikan">Dikembalikan</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="text-xs font-bold text-slate-500 uppercase">Catatan PPD</label>
+                        <textarea id="form-ppd-notes" rows="2" placeholder="Catatan Unit PPD..." class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"></textarea>
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="text-xs font-bold text-slate-500 uppercase">Tindakan Registri (No Fail Jabatan)</label>
+                        <input id="form-registry" type="text" placeholder="Cth: JPN/S/12345" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none" />
+                    </div>
+                `;
+            } else {
+                // Default form for other categories
+                const isKeluar = tab === 'surat-keluar';
+                document.getElementById('modal-title').innerText = tab === 'surat-masuk-jabatan' ? 'Tambah Surat Jabatan' : 'Tambah Surat Keluar';
+                container.innerHTML = `
+                    <div class="space-y-1.5">
+                        <label class="text-xs font-bold text-slate-500 uppercase">Perkara / Tajuk Surat</label>
+                        <input id="form-title" required type="text" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" />
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="space-y-1.5">
+                            <label class="text-xs font-bold text-slate-500 uppercase">${isKeluar ? 'Penerima' : 'Pengirim'}</label>
+                            <input id="form-origin" required type="text" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" />
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="text-xs font-bold text-slate-500 uppercase">Status</label>
+                            <select id="form-status" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none">
+                                ${isKeluar ? `
+                                    <option value="Draft">Draf</option>
+                                    <option value="Sent">Dihantar</option>
+                                ` : `
+                                    <option value="Belum diminit">Belum diminit</option>
+                                    <option value="Sudah diminit">Sudah diminit</option>
+                                    <option value="Dalam proses">Dalam proses</option>
+                                    <option value="Selesai">Selesai</option>
+                                    <option value="Dikembalikan">Dikembalikan</option>
+                                `}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="text-xs font-bold text-slate-500 uppercase">Catatan</label>
+                        <textarea id="form-description" rows="2" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none"></textarea>
+                    </div>
+                `;
+            }
+
             document.getElementById('modal-container').classList.remove('hidden');
             lucide.createIcons();
         }
@@ -487,39 +537,77 @@
         function handleAddMail(e) {
             e.preventDefault();
             const tab = state.activeTab;
-            let type = "";
-            let prefix = "";
-            
-            if (tab === 'surat-masuk-sekolah') { type = "incomingSchool"; prefix = "SMS"; }
-            else if (tab === 'surat-masuk-jabatan') { type = "incomingExternal"; prefix = "SMJ"; }
-            else { type = "outgoing"; prefix = "SK"; }
+            let newItem = {};
 
-            const newItem = {
-                id: prefix + '-' + Math.floor(100 + Math.random() * 900),
-                title: document.getElementById('form-title').value,
-                date: new Date().toISOString().split('T')[0],
-                priority: document.getElementById('form-priority').value,
-                description: document.getElementById('form-description').value,
-                status: prefix === 'SK' ? 'Sent' : 'Pending',
-                category: 'Umum'
-            };
+            if (tab === 'surat-masuk-sekolah') {
+                newItem = {
+                    id: 'SMS-' + Math.floor(100 + Math.random() * 900),
+                    dateReceived: document.getElementById('form-date-received').value,
+                    schoolName: document.getElementById('form-school-name').value,
+                    title: document.getElementById('form-title').value,
+                    refNumber: document.getElementById('form-ref').value,
+                    sector: document.getElementById('form-sector').value,
+                    officer: document.getElementById('form-officer').value,
+                    status: document.getElementById('form-status').value,
+                    ppdNotes: document.getElementById('form-ppd-notes').value,
+                    registryNo: document.getElementById('form-registry').value
+                };
+                state.data.incomingSchool.unshift(newItem);
+            } else {
+                const type = tab === 'surat-masuk-jabatan' ? 'incomingExternal' : 'outgoing';
+                const prefix = tab === 'surat-masuk-jabatan' ? 'SMJ' : 'SK';
+                newItem = {
+                    id: prefix + '-' + Math.floor(100 + Math.random() * 900),
+                    title: document.getElementById('form-title').value,
+                    date: new Date().toISOString().split('T')[0],
+                    status: document.getElementById('form-status').value,
+                    description: document.getElementById('form-description').value || ''
+                };
+                if (prefix === 'SK') newItem.recipient = document.getElementById('form-origin').value;
+                else newItem.sender = document.getElementById('form-origin').value;
+                
+                state.data[type].unshift(newItem);
+            }
 
-            if (prefix === 'SK') newItem.recipient = document.getElementById('form-origin').value;
-            else newItem.sender = document.getElementById('form-origin').value;
-
-            state.data[type].unshift(newItem);
             closeModal();
             updateView();
         }
 
         function deleteItem(id) {
-            let type = "";
-            if (id.indexOf('SMS') === 0) type = "incomingSchool";
-            else if (id.indexOf('SMJ') === 0) type = "incomingExternal";
-            else type = "outgoing";
-            
-            state.data[type] = state.data[type].filter(function(item) { return item.id !== id; });
+            let type = id.startsWith('SMS') ? 'incomingSchool' : (id.startsWith('SMJ') ? 'incomingExternal' : 'outgoing');
+            state.data[type] = state.data[type].filter(item => item.id !== id);
             updateView();
+        }
+
+        function renderSettings(container) {
+            container.innerHTML = `
+                <div class="bg-white rounded-xl border border-slate-200 p-8 shadow-sm max-w-2xl mx-auto mt-10">
+                    <h2 class="text-xl font-bold mb-6">Profil Sekolah</h2>
+                    <div class="space-y-6">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="space-y-2">
+                                <label class="text-xs font-bold text-slate-400 uppercase">Nama Sekolah</label>
+                                <input type="text" value="SMK Cyberjaya" class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg outline-none" />
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-xs font-bold text-slate-400 uppercase">Kod Sekolah</label>
+                                <input type="text" value="BEA1234" class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg outline-none" />
+                            </div>
+                        </div>
+                        <button class="w-full py-3 bg-blue-600 text-white rounded-lg font-bold">Simpan Profil</button>
+                    </div>
+                </div>`;
+        }
+
+        function renderEmpty(container, icon, title, desc) {
+            container.innerHTML = `
+                <div class="flex flex-col items-center justify-center h-full text-slate-400 animate-in fade-in">
+                    <div class="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mb-4 text-blue-500">
+                        <i data-lucide="${icon.toLowerCase()}" class="w-10 h-10"></i>
+                    </div>
+                    <h2 class="text-lg font-bold text-slate-900">${title}</h2>
+                    <p class="text-sm text-slate-500 text-center max-w-xs mt-1">${desc}</p>
+                </div>`;
         }
 
         window.onload = init;
