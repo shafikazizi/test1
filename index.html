@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="ms">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>eSurat Management System</title>
+    <title>PeD Pro - Sistem Pengurusan Surat Sekolah</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
@@ -43,29 +43,35 @@
                 <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white shrink-0">
                     <i data-lucide="file-text"></i>
                 </div>
-                <h1 class="sidebar-text text-xl font-bold text-white tracking-tight overflow-hidden whitespace-nowrap">eSurat v2.0</h1>
+                <h1 class="sidebar-text text-xl font-bold text-white tracking-tight overflow-hidden whitespace-nowrap">PeD Pro</h1>
             </div>
 
-            <nav class="flex-1 px-4 mt-4 space-y-2">
+            <nav class="flex-1 px-4 mt-4 space-y-2 overflow-y-auto custom-scrollbar">
                 <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-item w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
                     <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
-                    <span class="sidebar-text font-medium">Dashboard</span>
+                    <span class="sidebar-text font-medium text-sm">Dashboard</span>
                 </button>
-                <button onclick="switchTab('surat-masuk')" id="nav-surat-masuk" class="nav-item w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
-                    <i data-lucide="inbox" class="w-5 h-5"></i>
-                    <span class="sidebar-text font-medium">Surat Masuk</span>
+                <div class="sidebar-text px-4 py-2 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Surat Masuk</div>
+                <button onclick="switchTab('surat-masuk-sekolah')" id="nav-surat-masuk-sekolah" class="nav-item w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
+                    <i data-lucide="school" class="w-5 h-5"></i>
+                    <span class="sidebar-text font-medium text-sm text-left">Surat Sekolah</span>
                 </button>
+                <button onclick="switchTab('surat-masuk-jabatan')" id="nav-surat-masuk-jabatan" class="nav-item w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
+                    <i data-lucide="building-2" class="w-5 h-5"></i>
+                    <span class="sidebar-text font-medium text-sm text-left">Jabatan & Agensi Luar</span>
+                </button>
+                <div class="sidebar-text px-4 py-2 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Lain-lain</div>
                 <button onclick="switchTab('surat-keluar')" id="nav-surat-keluar" class="nav-item w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
                     <i data-lucide="send" class="w-5 h-5"></i>
-                    <span class="sidebar-text font-medium">Surat Keluar</span>
+                    <span class="sidebar-text font-medium text-sm">Surat Keluar</span>
                 </button>
                 <button onclick="switchTab('disposisi')" id="nav-disposisi" class="nav-item w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
                     <i data-lucide="users" class="w-5 h-5"></i>
-                    <span class="sidebar-text font-medium">Disposisi</span>
+                    <span class="sidebar-text font-medium text-sm">Tindakan & Minit</span>
                 </button>
                 <button onclick="switchTab('settings')" id="nav-settings" class="nav-item w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
                     <i data-lucide="settings" class="w-5 h-5"></i>
-                    <span class="sidebar-text font-medium">Pengaturan</span>
+                    <span class="sidebar-text font-medium text-sm">Tetapan</span>
                 </button>
             </nav>
 
@@ -85,25 +91,25 @@
                     <input 
                         type="text" 
                         id="search-input"
-                        placeholder="Cari surat, pengirim, atau no agenda..." 
+                        placeholder="Cari surat, pengirim, atau no rujukan..." 
                         class="w-full border-none focus:ring-0 text-sm outline-none"
                     >
                 </div>
                 
                 <div class="flex items-center space-x-6">
                     <div class="flex flex-col items-end hidden sm:flex">
-                        <span class="text-sm font-semibold">Admin Utama</span>
-                        <span class="text-[10px] uppercase tracking-wider text-slate-400 font-bold">System Administrator</span>
+                        <span class="text-sm font-semibold">Pentadbir Utama</span>
+                        <span class="text-[10px] uppercase tracking-wider text-slate-400 font-bold">PT (P/O) Sekolah</span>
                     </div>
                     <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold cursor-pointer hover:bg-blue-200 transition-colors">
-                        AU
+                        PU
                     </div>
                 </div>
             </header>
 
             <!-- Content Area -->
             <div id="content-area" class="flex-1 overflow-y-auto p-8 custom-scrollbar">
-                <!-- Content will be injected here by JS -->
+                <!-- Content injected here -->
             </div>
         </main>
     </div>
@@ -112,25 +118,25 @@
     <div id="modal-container" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-6 hidden">
         <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden transform transition-all">
             <div class="px-8 py-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-                <h3 id="modal-title" class="text-xl font-bold text-slate-900">Tambah Surat</h3>
+                <h3 id="modal-title" class="text-xl font-bold text-slate-900">Tambah Rekod</h3>
                 <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600">
                     <i data-lucide="x" class="w-6 h-6"></i>
                 </button>
             </div>
             <form id="mail-form" class="p-8 space-y-5">
                 <div class="space-y-1.5">
-                    <label class="text-xs font-bold text-slate-500 uppercase">Judul/Perihal Surat</label>
+                    <label class="text-xs font-bold text-slate-500 uppercase">Perkara / Tajuk Surat</label>
                     <input 
                         id="form-title"
                         required
                         type="text" 
-                        placeholder="Contoh: Undangan Koordinasi..."
+                        placeholder="Contoh: Jemputan Mesyuarat PIBG..."
                         class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div class="space-y-1.5">
-                        <label id="label-origin" class="text-xs font-bold text-slate-500 uppercase">Pengirim</label>
+                        <label id="label-origin" class="text-xs font-bold text-slate-500 uppercase">Asal / Pengirim</label>
                         <input 
                             id="form-origin"
                             required
@@ -139,19 +145,19 @@
                         />
                     </div>
                     <div class="space-y-1.5">
-                        <label class="text-xs font-bold text-slate-500 uppercase">Prioritas</label>
+                        <label class="text-xs font-bold text-slate-500 uppercase">Keutamaan</label>
                         <select 
                             id="form-priority"
                             class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-no-repeat bg-[right_1rem_center]"
                         >
-                            <option value="Low">Low</option>
-                            <option value="Medium" selected>Medium</option>
-                            <option value="High">High</option>
+                            <option value="Low">Rendah</option>
+                            <option value="Medium" selected>Sederhana</option>
+                            <option value="High">Tinggi</option>
                         </select>
                     </div>
                 </div>
                 <div class="space-y-1.5">
-                    <label class="text-xs font-bold text-slate-500 uppercase">Keterangan Singkat</label>
+                    <label class="text-xs font-bold text-slate-500 uppercase">Ringkasan / Catatan</label>
                     <textarea 
                         id="form-description"
                         rows="3"
@@ -170,7 +176,7 @@
                         type="submit"
                         class="flex-1 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 shadow-lg shadow-blue-100 active:scale-95 transition-all"
                     >
-                        Simpan Data
+                        Simpan Rekod
                     </button>
                 </div>
             </form>
@@ -184,31 +190,27 @@
             isSidebarOpen: true,
             searchTerm: '',
             data: {
-                incoming: [
-                    { id: 'IN-001', title: 'Undangan Rapat Koordinasi', sender: 'Kementerian Keuangan', date: '2024-03-01', category: 'Undangan', status: 'Pending', priority: 'High', description: 'Pembahasan anggaran tahunan di Jakarta.' },
-                    { id: 'IN-002', title: 'Laporan Proyek Semester 1', sender: 'PT. Maju Bersama', date: '2024-03-05', category: 'Laporan', status: 'Processed', priority: 'Medium', description: 'Progress report pembangunan infrastruktur.' },
-                    { id: 'IN-003', title: 'Permohonan Magang Mahasiswa', sender: 'Universitas Indonesia', date: '2024-03-08', category: 'Permohonan', status: 'Approved', priority: 'Low', description: 'Pengajuan magang untuk 3 mahasiswa Teknik.' },
+                incomingSchool: [
+                    { id: 'SMS-001', title: 'Minit Mesyuarat Guru Bil 1/2024', sender: 'Unit Kurikulum', date: '2024-03-01', category: 'Dalaman', status: 'Processed', priority: 'Medium', description: 'Minit mesyuarat kurikulum kali pertama.' },
+                    { id: 'SMS-002', title: 'Permohonan Cuti Sakit Kakitangan', sender: 'Cikgu Ahmad', date: '2024-03-05', category: 'Sumber Manusia', status: 'Approved', priority: 'High', description: 'Surat permohonan cuti sakit 3 hari.' }
+                ],
+                incomingExternal: [
+                    { id: 'SMJ-001', title: 'Surat Pekeliling Ikhtisas Bil 2/2024', sender: 'KPM / JPN', date: '2024-03-02', category: 'Pekeliling', status: 'Pending', priority: 'High', description: 'Pekeliling mengenai garis panduan disiplin murid.' },
+                    { id: 'SMJ-002', title: 'Tawaran Tajaan Program STEM', sender: 'Petronas Foundation', date: '2024-03-06', category: 'Tajaan', status: 'Pending', priority: 'Medium', description: 'Tawaran untuk menjalankan program STEM di sekolah.' }
                 ],
                 outgoing: [
-                    { id: 'OUT-001', title: 'Surat Balasan Kerjasama', recipient: 'PT. Teknologi Jaya', date: '2024-03-02', category: 'Kerjasama', status: 'Sent', priority: 'Medium' },
-                    { id: 'OUT-002', title: 'Pemberitahuan Cuti Bersama', recipient: 'Seluruh Karyawan', date: '2024-03-07', category: 'Internal', status: 'Draft', priority: 'High' },
+                    { id: 'SK-001', title: 'Surat Jemputan Perasmian Hari Sukan', recipient: 'PPD / YDP PIBG', date: '2024-03-10', category: 'Acara', status: 'Sent', priority: 'Medium' }
                 ]
             }
         };
 
-        // --- Core Functions ---
-
         function init() {
             lucide.createIcons();
             switchTab('dashboard');
-
-            // Search Event
             document.getElementById('search-input').addEventListener('input', function(e) {
                 state.searchTerm = e.target.value;
                 updateView();
             });
-
-            // Form Submit
             document.getElementById('mail-form').addEventListener('submit', handleAddMail);
         }
 
@@ -221,12 +223,10 @@
             if (state.isSidebarOpen) {
                 sidebar.classList.remove('w-20');
                 sidebar.classList.add('w-64');
-                toggleIcon.setAttribute('data-lucide', 'menu');
                 textElements.forEach(function(el) { el.classList.remove('hidden'); });
             } else {
                 sidebar.classList.remove('w-64');
                 sidebar.classList.add('w-20');
-                toggleIcon.setAttribute('data-lucide', 'menu'); 
                 textElements.forEach(function(el) { el.classList.add('hidden'); });
             }
             lucide.createIcons();
@@ -234,19 +234,19 @@
 
         function switchTab(tabId) {
             state.activeTab = tabId;
-            
-            // Update Active Nav Style
             document.querySelectorAll('.nav-item').forEach(function(el) { el.classList.remove('active-nav'); });
             document.getElementById('nav-' + tabId).classList.add('active-nav');
-
             updateView();
         }
 
         function getBadgeClass(val) {
             const styles = {
                 High: 'bg-red-100 text-red-700',
+                Tinggi: 'bg-red-100 text-red-700',
                 Medium: 'bg-amber-100 text-amber-700',
+                Sederhana: 'bg-amber-100 text-amber-700',
                 Low: 'bg-green-100 text-green-700',
+                Rendah: 'bg-green-100 text-green-700',
                 Pending: 'bg-slate-100 text-slate-700',
                 Processed: 'bg-blue-100 text-blue-700',
                 Approved: 'bg-emerald-100 text-emerald-700',
@@ -256,57 +256,52 @@
             return 'px-2.5 py-0.5 rounded-full text-xs font-semibold ' + (styles[val] || styles.Pending);
         }
 
+        function translateStatus(status) {
+            const map = { 'Pending': 'Dalam Proses', 'Processed': 'Telah Diproses', 'Approved': 'Diluluskan', 'Sent': 'Dihantar', 'Draft': 'Draf' };
+            return map[status] || status;
+        }
+
         function updateView() {
             const container = document.getElementById('content-area');
-            
             if (state.activeTab === 'dashboard') {
                 renderDashboard(container);
-            } else if (state.activeTab === 'surat-masuk' || state.activeTab === 'surat-keluar') {
+            } else if (['surat-masuk-sekolah', 'surat-masuk-jabatan', 'surat-keluar'].includes(state.activeTab)) {
                 renderTable(container);
             } else if (state.activeTab === 'disposisi') {
-                renderEmpty(container, 'Users', 'Alur Disposisi', 'Modul disposisi digunakan untuk meneruskan surat dari atasan ke bawahan dengan instruksi khusus.');
+                renderEmpty(container, 'Users', 'Tindakan & Minit', 'Modul untuk memberi arahan tindakan kepada warga sekolah.');
             } else if (state.activeTab === 'settings') {
                 renderSettings(container);
             }
-
             lucide.createIcons();
         }
 
-        // --- Render Views ---
-
         function renderDashboard(container) {
-            const recentActivities = [...state.data.incoming, ...state.data.outgoing].slice(0, 4);
-            const priorities = ['High', 'Medium', 'Low'];
-
+            const allActivities = [...state.data.incomingSchool, ...state.data.incomingExternal, ...state.data.outgoing].sort((a,b) => new Date(b.date) - new Date(a.date)).slice(0, 5);
+            
             container.innerHTML = `
                 <div class="space-y-8 animate-in fade-in duration-500">
-                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
+                    <div class="flex justify-between items-end">
                         <div>
-                            <h2 class="text-2xl font-bold text-slate-900">Ringkasan Sistem</h2>
-                            <p class="text-slate-500 mt-1">Data statistik persuratan periode Maret 2024</p>
+                            <h2 class="text-2xl font-bold text-slate-900">Rumusan Sistem</h2>
+                            <p class="text-slate-500 mt-1">Pecahan surat mengikut kategori terkini</p>
                         </div>
-                        <button class="flex items-center px-4 py-2 border border-slate-200 rounded-lg bg-white text-sm font-medium hover:bg-slate-50">
-                            <i data-lucide="calendar" class="mr-2 w-4 h-4"></i>
-                            7 Hari Terakhir
-                        </button>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                        ${renderStatCard('Total Surat Masuk', state.data.incoming.length, 'inbox', '12%', 'bg-blue-600')}
-                        ${renderStatCard('Total Surat Keluar', state.data.outgoing.length, 'send', '5%', 'bg-emerald-600')}
-                        ${renderStatCard('Pending Disposisi', '14', 'clock', '2%', 'bg-amber-500')}
-                        ${renderStatCard('Arsip Tersimpan', '1.2k', 'file-text', '18%', 'bg-indigo-600')}
+                        ${renderStatCard('Surat Sekolah', state.data.incomingSchool.length, 'school', 'Blue', 'bg-blue-600')}
+                        ${renderStatCard('Surat Luar', state.data.incomingExternal.length, 'building-2', 'Orange', 'bg-orange-600')}
+                        ${renderStatCard('Surat Keluar', state.data.outgoing.length, 'send', 'Green', 'bg-emerald-600')}
+                        ${renderStatCard('Tertunda', '14', 'clock', 'Amber', 'bg-amber-500')}
                     </div>
 
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                         <div class="lg:col-span-2 bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
                             <h3 class="font-bold text-lg mb-6 flex items-center text-slate-800">
                                 <i data-lucide="clock" class="mr-2 text-blue-600 w-5 h-5"></i>
-                                Aktivitas Terbaru
+                                Aktiviti Terkini
                             </h3>
                             <div class="space-y-6">
-                                ${recentActivities.map(function(item) {
-                                    return `
+                                ${allActivities.map(item => `
                                     <div class="flex items-start space-x-4 border-l-2 border-slate-100 pl-4 relative">
                                         <div class="absolute -left-[5px] top-0 w-2 h-2 rounded-full bg-blue-500"></div>
                                         <div class="flex-1">
@@ -314,35 +309,31 @@
                                                 <h4 class="font-semibold text-slate-900 text-sm">${item.title}</h4>
                                                 <span class="text-xs text-slate-400">${item.date}</span>
                                             </div>
-                                            <p class="text-xs text-slate-500 mt-1">${item.sender ? 'Diterima dari: ' + item.sender : 'Dikirim ke: ' + item.recipient}</p>
-                                            <div class="mt-2">
-                                                <span class="${getBadgeClass(item.status)}">${item.status}</span>
+                                            <p class="text-xs text-slate-500 mt-1">${item.sender ? 'Asal: ' + item.sender : 'Kepada: ' + item.recipient}</p>
+                                            <div class="mt-2 flex space-x-2">
+                                                <span class="${getBadgeClass(item.status)}">${translateStatus(item.status)}</span>
+                                                <span class="text-[10px] uppercase font-bold text-slate-400 mt-0.5">${item.id.split('-')[0]}</span>
                                             </div>
                                         </div>
                                     </div>
-                                    `;
-                                }).join('')}
+                                `).join('')}
                             </div>
                         </div>
 
                         <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
-                            <h3 class="font-bold text-lg mb-6 text-slate-800">Distribusi Prioritas</h3>
+                            <h3 class="font-bold text-lg mb-6 text-slate-800">Pecahan Keutamaan</h3>
                             <div class="space-y-4">
-                                ${priorities.map(function(p) {
-                                    const percentage = p === 'High' ? '25%' : p === 'Medium' ? '50%' : '25%';
-                                    const color = p === 'High' ? 'bg-red-500' : p === 'Medium' ? 'bg-amber-500' : 'bg-green-500';
-                                    return `
+                                ${['Tinggi', 'Sederhana', 'Rendah'].map(p => `
                                     <div>
                                         <div class="flex justify-between text-sm mb-1">
-                                            <span class="font-medium text-slate-600">${p} Priority</span>
-                                            <span class="text-slate-400">${percentage}</span>
+                                            <span class="font-medium text-slate-600">Keutamaan ${p}</span>
+                                            <span class="text-slate-400">33%</span>
                                         </div>
                                         <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-                                            <div class="h-full ${color}" style="width: ${percentage}"></div>
+                                            <div class="h-full ${p === 'Tinggi' ? 'bg-red-500' : p === 'Sederhana' ? 'bg-amber-500' : 'bg-green-500'}" style="width: 33%"></div>
                                         </div>
                                     </div>
-                                    `;
-                                }).join('')}
+                                `).join('')}
                             </div>
                         </div>
                     </div>
@@ -355,158 +346,135 @@
                 <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
                     <div class="flex justify-between items-start">
                         <div>
-                            <p class="text-sm font-medium text-slate-500">${title}</p>
+                            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">${title}</p>
                             <h3 class="text-2xl font-bold mt-1 text-slate-900">${value}</h3>
                         </div>
-                        <div class="${colorClass} p-3 rounded-lg">
-                            <i data-lucide="${icon}" class="text-white w-6 h-6"></i>
+                        <div class="${colorClass} p-3 rounded-lg text-white">
+                            <i data-lucide="${icon}" class="w-6 h-6"></i>
                         </div>
-                    </div>
-                    <div class="mt-4 flex items-center text-xs font-medium">
-                        <span class="text-emerald-500 flex items-center">
-                            <i data-lucide="arrow-up-right" class="mr-1 w-3 h-3"></i> ${trend}
-                        </span>
-                        <span class="text-slate-400 ml-2">dari bulan lalu</span>
                     </div>
                 </div>
             `;
         }
 
         function renderTable(container) {
-            const list = state.activeTab === 'surat-masuk' ? state.data.incoming : state.data.outgoing;
-            const filtered = list.filter(function(item) {
-                return item.title.toLowerCase().indexOf(state.searchTerm.toLowerCase()) !== -1 ||
-                (item.sender || item.recipient).toLowerCase().indexOf(state.searchTerm.toLowerCase()) !== -1;
-            });
+            let list = [];
+            let title = "";
+            let sub = "";
+            
+            if (state.activeTab === 'surat-masuk-sekolah') {
+                list = state.data.incomingSchool;
+                title = "Surat Masuk Sekolah";
+                sub = "Uruskan korespondensi dalaman antara unit dan warga sekolah.";
+            } else if (state.activeTab === 'surat-masuk-jabatan') {
+                list = state.data.incomingExternal;
+                title = "Surat Masuk Jabatan & Luar";
+                sub = "Rekod surat rasmi dari JPN, PPD, KPM dan agensi luar.";
+            } else {
+                list = state.data.outgoing;
+                title = "Surat Keluar Sekolah";
+                sub = "Pantau surat rasmi yang dihantar keluar oleh pihak sekolah.";
+            }
+
+            const filtered = list.filter(item => 
+                item.title.toLowerCase().indexOf(state.searchTerm.toLowerCase()) !== -1 ||
+                (item.sender || item.recipient).toLowerCase().indexOf(state.searchTerm.toLowerCase()) !== -1
+            );
 
             container.innerHTML = `
                 <div class="animate-in slide-in-from-bottom-4 duration-500">
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
                         <div>
-                            <h2 class="text-2xl font-bold text-slate-900">${state.activeTab === 'surat-masuk' ? 'Surat Masuk' : 'Surat Keluar'}</h2>
-                            <p class="text-slate-500 mt-1">Mengelola daftar korespondensi resmi.</p>
+                            <h2 class="text-2xl font-bold text-slate-900">${title}</h2>
+                            <p class="text-slate-500 mt-1">${sub}</p>
                         </div>
                         <button onclick="openModal()" class="flex items-center px-6 py-2.5 bg-blue-600 text-white rounded-lg font-bold shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all active:scale-95">
                             <i data-lucide="plus" class="mr-2 w-5 h-5"></i>
-                            Tambah Baru
+                            Rekod Baru
                         </button>
                     </div>
 
                     <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
                         <div class="px-6 py-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
-                            <span class="text-sm font-semibold text-slate-600">Menampilkan ${filtered.length} Dokumen</span>
-                            <button class="text-slate-400 hover:text-slate-600"><i data-lucide="filter" class="w-5 h-5"></i></button>
+                            <span class="text-sm font-semibold text-slate-600">Total: ${filtered.length} Rekod</span>
                         </div>
                         <div class="overflow-x-auto">
                             <table class="w-full text-left whitespace-nowrap">
                                 <thead>
-                                    <tr class="bg-white text-slate-400 text-[11px] uppercase tracking-widest font-bold">
-                                        <th class="px-6 py-4">Informasi Surat</th>
-                                        <th class="px-6 py-4">Asal/Tujuan</th>
-                                        <th class="px-6 py-4">Tgl & Kat</th>
+                                    <tr class="bg-white text-slate-400 text-[11px] uppercase tracking-widest font-bold border-b border-slate-100">
+                                        <th class="px-6 py-4">Maklumat Dokumen</th>
+                                        <th class="px-6 py-4">Pihak Terlibat</th>
+                                        <th class="px-6 py-4">Tarikh</th>
                                         <th class="px-6 py-4">Status</th>
                                         <th class="px-6 py-4 text-right">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-slate-100">
-                                    ${filtered.map(function(item) {
-                                        return `
+                                    ${filtered.map(item => `
                                         <tr class="hover:bg-slate-50 transition-colors group">
                                             <td class="px-6 py-4">
                                                 <div class="flex flex-col">
-                                                    <span class="font-bold text-slate-900 leading-tight mb-1">${item.title}</span>
-                                                    <span class="text-xs text-blue-600 font-mono font-medium">${item.id}</span>
+                                                    <span class="font-bold text-slate-900 text-sm mb-0.5 whitespace-normal max-w-xs">${item.title}</span>
+                                                    <span class="text-[10px] text-blue-600 font-mono font-bold">${item.id}</span>
                                                 </div>
                                             </td>
-                                            <td class="px-6 py-4">
-                                                <div class="flex items-center text-sm font-medium text-slate-600">
-                                                    <i data-lucide="${item.sender ? 'arrow-down-left' : 'arrow-up-right'}" class="mr-2 w-4 h-4 ${item.sender ? 'text-blue-500' : 'text-emerald-500'}"></i>
-                                                    ${item.sender || item.recipient}
-                                                </div>
+                                            <td class="px-6 py-4 text-sm font-medium text-slate-600">
+                                                ${item.sender || item.recipient}
+                                            </td>
+                                            <td class="px-6 py-4 text-sm text-slate-500 font-medium">
+                                                ${item.date}
                                             </td>
                                             <td class="px-6 py-4">
-                                                <div class="flex flex-col">
-                                                    <span class="text-sm text-slate-600 font-medium">${item.date}</span>
-                                                    <span class="text-xs text-slate-400">${item.category || 'Umum'}</span>
-                                                </div>
-                                            </td>
-                                            <td class="px-6 py-4">
-                                                <span class="${getBadgeClass(item.status)}">${item.status}</span>
+                                                <span class="${getBadgeClass(item.status)}">${translateStatus(item.status)}</span>
                                             </td>
                                             <td class="px-6 py-4 text-right">
-                                                <div class="flex justify-end space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                    <button class="p-2 hover:bg-blue-50 text-blue-600 rounded-md transition-colors"><i data-lucide="eye" class="w-4 h-4"></i></button>
-                                                    <button class="p-2 hover:bg-slate-100 text-slate-400 rounded-md transition-colors"><i data-lucide="download" class="w-4 h-4"></i></button>
-                                                    <button onclick="deleteItem('${item.id}')" class="p-2 hover:bg-red-50 text-red-600 rounded-md transition-colors"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                                                <div class="flex justify-end space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                    <button class="p-2 hover:bg-blue-50 text-blue-600 rounded-md"><i data-lucide="eye" class="w-4 h-4"></i></button>
+                                                    <button onclick="deleteItem('${item.id}')" class="p-2 hover:bg-red-50 text-red-600 rounded-md"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                                                 </div>
                                             </td>
                                         </tr>
-                                        `;
-                                    }).join('')}
+                                    `).join('')}
                                 </tbody>
                             </table>
                         </div>
-                        ${filtered.length === 0 ? `
-                            <div class="py-20 flex flex-col items-center justify-center text-slate-400">
-                                <i data-lucide="inbox" class="mb-4 stroke-[1.5] w-12 h-12"></i>
-                                <p class="font-medium text-lg text-slate-500">Tidak ada surat ditemukan</p>
-                            </div>
-                        ` : ''}
+                        ${filtered.length === 0 ? '<div class="py-20 text-center text-slate-400">Tiada rekod ditemui</div>' : ''}
                     </div>
                 </div>
             `;
         }
 
         function renderSettings(container) {
-            container.innerHTML = `
-                <div class="bg-white rounded-xl border border-slate-200 p-8 shadow-sm max-w-2xl mx-auto mt-10">
-                    <h2 class="text-xl font-bold mb-6">Profil Instansi</h2>
-                    <div class="space-y-6">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div class="space-y-2">
-                                <label class="text-xs font-bold text-slate-400 uppercase">Nama Instansi</label>
-                                <input type="text" value="Dinas Komunikasi & Informatika" class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" />
-                            </div>
-                            <div class="space-y-2">
-                                <label class="text-xs font-bold text-slate-400 uppercase">Kode Instansi</label>
-                                <input type="text" value="KOMINFO-01" class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" />
-                            </div>
+            container.innerHTML = `<div class="bg-white rounded-xl border border-slate-200 p-8 shadow-sm max-w-2xl mx-auto mt-10">
+                <h2 class="text-xl font-bold mb-6">Profil Sekolah</h2>
+                <div class="space-y-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="space-y-2">
+                            <label class="text-xs font-bold text-slate-400 uppercase">Nama Sekolah</label>
+                            <input type="text" value="SMK Cyberjaya" class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg outline-none" />
                         </div>
                         <div class="space-y-2">
-                            <label class="text-xs font-bold text-slate-400 uppercase">Logo Instansi</label>
-                            <div class="w-full h-32 border-2 border-dashed border-slate-200 rounded-xl flex items-center justify-center text-slate-400 cursor-pointer hover:bg-slate-50">
-                                Unggah Logo Baru
-                            </div>
+                            <label class="text-xs font-bold text-slate-400 uppercase">Kod Sekolah</label>
+                            <input type="text" value="BEA1234" class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg outline-none" />
                         </div>
-                        <button class="w-full py-3 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 transition-colors shadow-lg shadow-blue-100">
-                            Simpan Perubahan
-                        </button>
                     </div>
+                    <button class="w-full py-3 bg-blue-600 text-white rounded-lg font-bold">Simpan Profil</button>
                 </div>
-            `;
+            </div>`;
         }
 
         function renderEmpty(container, icon, title, desc) {
-            container.innerHTML = `
-                <div class="flex flex-col items-center justify-center h-full text-slate-400 animate-in fade-in duration-700">
-                    <div class="w-24 h-24 bg-blue-50 rounded-full flex items-center justify-center mb-6 text-blue-500">
-                        <i data-lucide="${icon.toLowerCase()}" class="w-10 h-10"></i>
-                    </div>
-                    <h2 class="text-xl font-bold text-slate-900">${title}</h2>
-                    <p class="text-slate-500 max-w-sm text-center mt-2 leading-relaxed">${desc}</p>
-                    <button class="mt-8 px-6 py-2 bg-slate-900 text-white rounded-lg font-bold hover:bg-slate-800 transition-colors">
-                        Mulai Konfigurasi
-                    </button>
-                </div>
-            `;
+            container.innerHTML = `<div class="flex flex-col items-center justify-center h-full text-slate-400 animate-in fade-in">
+                <div class="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mb-4 text-blue-500"><i data-lucide="${icon.toLowerCase()}" class="w-10 h-10"></i></div>
+                <h2 class="text-lg font-bold text-slate-900">${title}</h2>
+                <p class="text-sm text-slate-500 text-center max-w-xs mt-1">${desc}</p>
+            </div>`;
         }
 
-        // --- Event Handlers ---
-
         function openModal() {
-            const isMasuk = state.activeTab === 'surat-masuk';
-            document.getElementById('modal-title').innerText = isMasuk ? 'Tambah Surat Masuk' : 'Tambah Surat Keluar';
-            document.getElementById('label-origin').innerText = isMasuk ? 'Pengirim' : 'Penerima';
+            const tab = state.activeTab;
+            document.getElementById('modal-title').innerText = 'Tambah ' + (tab === 'surat-masuk-sekolah' ? 'Surat Masuk Sekolah' : (tab === 'surat-masuk-jabatan' ? 'Surat Masuk Jabatan' : 'Surat Keluar'));
+            document.getElementById('label-origin').innerText = tab.includes('masuk') ? 'Asal / Pengirim' : 'Penerima';
             document.getElementById('modal-container').classList.remove('hidden');
             lucide.createIcons();
         }
@@ -518,24 +486,26 @@
 
         function handleAddMail(e) {
             e.preventDefault();
-            const type = state.activeTab === 'surat-masuk' ? 'incoming' : 'outgoing';
-            const idPrefix = type === 'incoming' ? 'IN' : 'OUT';
+            const tab = state.activeTab;
+            let type = "";
+            let prefix = "";
             
+            if (tab === 'surat-masuk-sekolah') { type = "incomingSchool"; prefix = "SMS"; }
+            else if (tab === 'surat-masuk-jabatan') { type = "incomingExternal"; prefix = "SMJ"; }
+            else { type = "outgoing"; prefix = "SK"; }
+
             const newItem = {
-                id: idPrefix + '-' + Math.floor(100 + Math.random() * 900),
+                id: prefix + '-' + Math.floor(100 + Math.random() * 900),
                 title: document.getElementById('form-title').value,
                 date: new Date().toISOString().split('T')[0],
                 priority: document.getElementById('form-priority').value,
                 description: document.getElementById('form-description').value,
-                status: type === 'incoming' ? 'Pending' : 'Draft',
+                status: prefix === 'SK' ? 'Sent' : 'Pending',
                 category: 'Umum'
             };
 
-            if (type === 'incoming') {
-                newItem.sender = document.getElementById('form-origin').value;
-            } else {
-                newItem.recipient = document.getElementById('form-origin').value;
-            }
+            if (prefix === 'SK') newItem.recipient = document.getElementById('form-origin').value;
+            else newItem.sender = document.getElementById('form-origin').value;
 
             state.data[type].unshift(newItem);
             closeModal();
@@ -543,12 +513,15 @@
         }
 
         function deleteItem(id) {
-            const type = id.indexOf('IN') === 0 ? 'incoming' : 'outgoing';
+            let type = "";
+            if (id.indexOf('SMS') === 0) type = "incomingSchool";
+            else if (id.indexOf('SMJ') === 0) type = "incomingExternal";
+            else type = "outgoing";
+            
             state.data[type] = state.data[type].filter(function(item) { return item.id !== id; });
             updateView();
         }
 
-        // Boot
         window.onload = init;
     </script>
 </body>
