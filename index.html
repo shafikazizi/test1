@@ -1,635 +1,555 @@
-<!doctype html>
-<html lang="id" class="h-full">
- <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sistem eSurat</title>
-  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
-  <script src="/_sdk/element_sdk.js"></script>
-  <script src="/_sdk/data_sdk.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
-  <style>
-    * { font-family: 'Plus Jakarta Sans', sans-serif; }
-    .glass-card {
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(10px);
-    }
-    .sidebar-item:hover { transform: translateX(4px); }
-    .stat-card:hover { transform: translateY(-2px); }
-    .table-row:hover { background: rgba(59, 130, 246, 0.05); }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
-    .priority-high { border-left: 4px solid #ef4444; }
-    .priority-medium { border-left: 4px solid #f59e0b; }
-    .priority-low { border-left: 4px solid #22c55e; }
-  </style>
-  <style>body { box-sizing: border-box; }</style>
- </head>
- <body class="h-full">
-  <div id="app-wrapper" class="h-full w-full overflow-auto" style="background: linear-gradient(135deg, #1e3a5f 0%, #0f172a 50%, #1e1b4b 100%);"><!-- Main Container -->
-   <div class="flex h-full min-h-screen"><!-- Sidebar -->
-    <aside class="w-64 bg-slate-900/80 backdrop-blur-xl border-r border-slate-700/50 flex flex-col"><!-- Logo -->
-     <div class="p-6 border-b border-slate-700/50">
-      <div class="flex items-center gap-3">
-       <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
-        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-        </svg>
-       </div>
-       <div>
-        <h1 id="sidebar-title" class="text-white font-bold text-lg">eSurat</h1>
-        <p id="sidebar-org" class="text-slate-400 text-xs">Manajemen Surat Digital</p>
-       </div>
-      </div>
-     </div><!-- Navigation -->
-     <nav class="flex-1 p-4 space-y-2"><button onclick="showView('dashboard')" class="sidebar-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-white bg-blue-600/20 border border-blue-500/30 transition-all duration-200">
-       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-       </svg><span class="font-medium">Dashboard</span> </button> <button onclick="showView('surat-masuk')" class="sidebar-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:text-white hover:bg-slate-700/50 transition-all duration-200">
-       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
-       </svg><span class="font-medium">Surat Masuk</span> </button> <button onclick="showView('surat-keluar')" class="sidebar-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:text-white hover:bg-slate-700/50 transition-all duration-200">
-       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-       </svg><span class="font-medium">Surat Keluar</span> </button> <button onclick="showView('disposisi')" class="sidebar-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:text-white hover:bg-slate-700/50 transition-all duration-200">
-       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-       </svg><span class="font-medium">Disposisi</span> </button>
-     </nav><!-- User Info -->
-     <div class="p-4 border-t border-slate-700/50">
-      <div class="flex items-center gap-3 px-3 py-2">
-       <div class="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white font-bold">
-        A
-       </div>
-       <div class="flex-1 min-w-0">
-        <p class="text-white font-medium text-sm truncate">Administrator</p>
-        <p class="text-slate-400 text-xs">Admin Sistem</p>
-       </div>
-      </div>
-     </div>
-    </aside><!-- Main Content -->
-    <main class="flex-1 overflow-auto"><!-- Dashboard View -->
-     <div id="view-dashboard" class="p-8 animate-fade-in"><!-- Header -->
-      <div class="mb-8">
-       <h2 id="main-title" class="text-3xl font-bold text-white mb-2">Dashboard eSurat</h2>
-       <p class="text-slate-400">Selamat datang di Sistem Manajemen Surat Digital</p>
-      </div><!-- Stats Cards -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-       <div class="stat-card glass-card rounded-2xl p-6 transition-all duration-300 cursor-pointer" onclick="showView('surat-masuk')">
-        <div class="flex items-center justify-between mb-4">
-         <div class="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center">
-          <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
-          </svg>
-         </div><span class="text-xs font-medium text-blue-600 bg-blue-100 px-2 py-1 rounded-full">Masuk</span>
-        </div>
-        <h3 id="stat-masuk" class="text-3xl font-bold text-slate-800 mb-1">0</h3>
-        <p class="text-slate-500 text-sm">Total Surat Masuk</p>
-       </div>
-       <div class="stat-card glass-card rounded-2xl p-6 transition-all duration-300 cursor-pointer" onclick="showView('surat-keluar')">
-        <div class="flex items-center justify-between mb-4">
-         <div class="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center">
-          <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-          </svg>
-         </div><span class="text-xs font-medium text-emerald-600 bg-emerald-100 px-2 py-1 rounded-full">Keluar</span>
-        </div>
-        <h3 id="stat-keluar" class="text-3xl font-bold text-slate-800 mb-1">0</h3>
-        <p class="text-slate-500 text-sm">Total Surat Keluar</p>
-       </div>
-       <div class="stat-card glass-card rounded-2xl p-6 transition-all duration-300">
-        <div class="flex items-center justify-between mb-4">
-         <div class="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center">
-          <svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-         </div><span class="text-xs font-medium text-amber-600 bg-amber-100 px-2 py-1 rounded-full">Proses</span>
-        </div>
-        <h3 id="stat-proses" class="text-3xl font-bold text-slate-800 mb-1">0</h3>
-        <p class="text-slate-500 text-sm">Sedang Diproses</p>
-       </div>
-       <div class="stat-card glass-card rounded-2xl p-6 transition-all duration-300">
-        <div class="flex items-center justify-between mb-4">
-         <div class="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center">
-          <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-         </div><span class="text-xs font-medium text-purple-600 bg-purple-100 px-2 py-1 rounded-full">Selesai</span>
-        </div>
-        <h3 id="stat-selesai" class="text-3xl font-bold text-slate-800 mb-1">0</h3>
-        <p class="text-slate-500 text-sm">Surat Selesai</p>
-       </div>
-      </div><!-- Recent Letters -->
-      <div class="glass-card rounded-2xl p-6">
-       <div class="flex items-center justify-between mb-6">
-        <h3 class="text-xl font-bold text-slate-800">Surat Terbaru</h3><button onclick="openModal()" class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-medium transition-colors">
-         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-         </svg> Tambah Surat </button>
-       </div>
-       <div id="recent-letters" class="space-y-3">
-        <div class="text-center py-12 text-slate-400">
-         <svg class="w-16 h-16 mx-auto mb-4 opacity-50" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-         </svg>
-         <p class="font-medium">Belum ada surat</p>
-         <p class="text-sm">Klik tombol "Tambah Surat" untuk membuat surat baru</p>
-        </div>
-       </div>
-      </div>
-     </div><!-- Surat Masuk View -->
-     <div id="view-surat-masuk" class="p-8 hidden">
-      <div class="flex items-center justify-between mb-8">
-       <div>
-        <h2 class="text-3xl font-bold text-white mb-2">Surat Masuk</h2>
-        <p class="text-slate-400">Daftar semua surat masuk yang diterima</p>
-       </div><button onclick="openModal('masuk')" class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-medium transition-colors">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-        </svg> Tambah Surat Masuk </button>
-      </div>
-      <div class="glass-card rounded-2xl overflow-hidden">
-       <div id="list-surat-masuk" class="divide-y divide-slate-100">
-        <div class="text-center py-12 text-slate-400">
-         <p class="font-medium">Belum ada surat masuk</p>
-        </div>
-       </div>
-      </div>
-     </div><!-- Surat Keluar View -->
-     <div id="view-surat-keluar" class="p-8 hidden">
-      <div class="flex items-center justify-between mb-8">
-       <div>
-        <h2 class="text-3xl font-bold text-white mb-2">Surat Keluar</h2>
-        <p class="text-slate-400">Daftar semua surat keluar yang dikirim</p>
-       </div><button onclick="openModal('keluar')" class="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl font-medium transition-colors">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-        </svg> Tambah Surat Keluar </button>
-      </div>
-      <div class="glass-card rounded-2xl overflow-hidden">
-       <div id="list-surat-keluar" class="divide-y divide-slate-100">
-        <div class="text-center py-12 text-slate-400">
-         <p class="font-medium">Belum ada surat keluar</p>
-        </div>
-       </div>
-      </div>
-     </div><!-- Disposisi View -->
-     <div id="view-disposisi" class="p-8 hidden">
-      <div class="mb-8">
-       <h2 class="text-3xl font-bold text-white mb-2">Disposisi Surat</h2>
-       <p class="text-slate-400">Kelola disposisi dan tindak lanjut surat</p>
-      </div>
-      <div class="glass-card rounded-2xl overflow-hidden">
-       <div id="list-disposisi" class="divide-y divide-slate-100">
-        <div class="text-center py-12 text-slate-400">
-         <p class="font-medium">Belum ada disposisi</p>
-        </div>
-       </div>
-      </div>
-     </div>
-    </main>
-   </div><!-- Modal -->
-   <div id="modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
-    <div class="bg-white rounded-2xl w-full max-w-lg max-h-[90%] overflow-auto animate-fade-in">
-     <div class="p-6 border-b border-slate-100">
-      <div class="flex items-center justify-between">
-       <h3 id="modal-title" class="text-xl font-bold text-slate-800">Tambah Surat Baru</h3><button onclick="closeModal()" class="w-10 h-10 rounded-xl hover:bg-slate-100 flex items-center justify-center transition-colors">
-        <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-        </svg></button>
-      </div>
-     </div>
-     <form id="surat-form" class="p-6 space-y-4"><input type="hidden" id="surat-id" value="">
-      <div class="grid grid-cols-2 gap-4">
-       <div><label class="block text-sm font-medium text-slate-700 mb-2">Jenis Surat</label> <select id="jenis-surat" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"> <option value="masuk">Surat Masuk</option> <option value="keluar">Surat Keluar</option> </select>
-       </div>
-       <div><label class="block text-sm font-medium text-slate-700 mb-2">Nomor Surat</label> <input type="text" id="nomor-surat" required placeholder="001/ABC/2024" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all">
-       </div>
-      </div>
-      <div><label class="block text-sm font-medium text-slate-700 mb-2">Perihal</label> <input type="text" id="perihal" required placeholder="Perihal surat..." class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all">
-      </div>
-      <div class="grid grid-cols-2 gap-4">
-       <div><label class="block text-sm font-medium text-slate-700 mb-2">Pengirim</label> <input type="text" id="pengirim" required placeholder="Nama pengirim" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all">
-       </div>
-       <div><label class="block text-sm font-medium text-slate-700 mb-2">Penerima</label> <input type="text" id="penerima" required placeholder="Nama penerima" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all">
-       </div>
-      </div>
-      <div class="grid grid-cols-2 gap-4">
-       <div><label class="block text-sm font-medium text-slate-700 mb-2">Tanggal</label> <input type="date" id="tanggal" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all">
-       </div>
-       <div><label class="block text-sm font-medium text-slate-700 mb-2">Prioritas</label> <select id="prioritas" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"> <option value="rendah">Rendah</option> <option value="sedang" selected>Sedang</option> <option value="tinggi">Tinggi</option> </select>
-       </div>
-      </div>
-      <div><label class="block text-sm font-medium text-slate-700 mb-2">Status</label> <select id="status" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"> <option value="baru">Baru</option> <option value="diproses">Sedang Diproses</option> <option value="selesai">Selesai</option> </select>
-      </div>
-      <div><label class="block text-sm font-medium text-slate-700 mb-2">Catatan</label> <textarea id="catatan" rows="3" placeholder="Catatan tambahan..." class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all resize-none"></textarea>
-      </div>
-      <div class="flex gap-3 pt-4"><button type="button" onclick="closeModal()" class="flex-1 px-4 py-3 rounded-xl border border-slate-200 text-slate-600 font-medium hover:bg-slate-50 transition-colors"> Batal </button> <button type="submit" id="submit-btn" class="flex-1 px-4 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-medium transition-colors"> Simpan Surat </button>
-      </div>
-     </form>
-    </div>
-   </div><!-- Delete Confirmation Modal -->
-   <div id="delete-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
-    <div class="bg-white rounded-2xl w-full max-w-sm animate-fade-in p-6">
-     <div class="text-center mb-6">
-      <div class="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
-       <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-       </svg>
-      </div>
-      <h3 class="text-xl font-bold text-slate-800 mb-2">Hapus Surat?</h3>
-      <p class="text-slate-500">Surat yang dihapus tidak dapat dikembalikan.</p>
-     </div>
-     <div class="flex gap-3"><button onclick="closeDeleteModal()" class="flex-1 px-4 py-3 rounded-xl border border-slate-200 text-slate-600 font-medium hover:bg-slate-50 transition-colors"> Batal </button> <button id="confirm-delete-btn" class="flex-1 px-4 py-3 rounded-xl bg-red-600 hover:bg-red-700 text-white font-medium transition-colors"> Hapus </button>
-     </div>
-    </div>
-   </div><!-- Toast -->
-   <div id="toast" class="fixed bottom-6 right-6 transform translate-y-20 opacity-0 transition-all duration-300 z-50">
-    <div class="bg-slate-800 text-white px-6 py-4 rounded-xl shadow-lg flex items-center gap-3">
-     <svg id="toast-icon" class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-     </svg><span id="toast-message">Berhasil disimpan!</span>
-    </div>
-   </div>
-  </div>
-  <script>
-    // Application State
-    let suratData = [];
-    let editingId = null;
-    let deleteId = null;
-    let currentRecordCount = 0;
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>eSurat Management System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
 
-    const defaultConfig = {
-      app_title: 'Dashboard eSurat',
-      organization_name: 'Manajemen Surat Digital',
-      background_color: '#1e3a5f',
-      surface_color: '#ffffff',
-      text_color: '#1e293b',
-      primary_action_color: '#2563eb',
-      secondary_action_color: '#059669'
-    };
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
 
-    // Element SDK Implementation
-    if (window.elementSdk) {
-      window.elementSdk.init({
-        defaultConfig,
-        onConfigChange: async (config) => {
-          const title = config.app_title || defaultConfig.app_title;
-          const org = config.organization_name || defaultConfig.organization_name;
-          const bgColor = config.background_color || defaultConfig.background_color;
-          const surfaceColor = config.surface_color || defaultConfig.surface_color;
-          const textColor = config.text_color || defaultConfig.text_color;
-          const primaryColor = config.primary_action_color || defaultConfig.primary_action_color;
-          const secondaryColor = config.secondary_action_color || defaultConfig.secondary_action_color;
+        .active-nav {
+            background-color: #2563eb;
+            color: white;
+            box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 overflow-hidden">
 
-          document.getElementById('main-title').textContent = title;
-          document.getElementById('sidebar-org').textContent = org;
-          
-          // Apply colors
-          document.getElementById('app-wrapper').style.background = `linear-gradient(135deg, ${bgColor} 0%, #0f172a 50%, #1e1b4b 100%)`;
-          document.querySelectorAll('.glass-card').forEach(el => {
-            el.style.backgroundColor = surfaceColor;
-          });
-        },
-        mapToCapabilities: (config) => ({
-          recolorables: [
-            {
-              get: () => config.background_color || defaultConfig.background_color,
-              set: (v) => { config.background_color = v; window.elementSdk.setConfig({ background_color: v }); }
-            },
-            {
-              get: () => config.surface_color || defaultConfig.surface_color,
-              set: (v) => { config.surface_color = v; window.elementSdk.setConfig({ surface_color: v }); }
-            },
-            {
-              get: () => config.text_color || defaultConfig.text_color,
-              set: (v) => { config.text_color = v; window.elementSdk.setConfig({ text_color: v }); }
-            },
-            {
-              get: () => config.primary_action_color || defaultConfig.primary_action_color,
-              set: (v) => { config.primary_action_color = v; window.elementSdk.setConfig({ primary_action_color: v }); }
-            },
-            {
-              get: () => config.secondary_action_color || defaultConfig.secondary_action_color,
-              set: (v) => { config.secondary_action_color = v; window.elementSdk.setConfig({ secondary_action_color: v }); }
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="w-64 bg-slate-900 transition-all duration-300 flex flex-col z-20 shrink-0">
+            <div class="p-6 flex items-center space-x-3">
+                <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white shrink-0">
+                    <i data-lucide="file-text"></i>
+                </div>
+                <h1 class="sidebar-text text-xl font-bold text-white tracking-tight overflow-hidden whitespace-nowrap">eSurat v2.0</h1>
+            </div>
+
+            <nav class="flex-1 px-4 mt-4 space-y-2">
+                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-item w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+                    <span class="sidebar-text font-medium">Dashboard</span>
+                </button>
+                <button onclick="switchTab('surat-masuk')" id="nav-surat-masuk" class="nav-item w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
+                    <i data-lucide="inbox" class="w-5 h-5"></i>
+                    <span class="sidebar-text font-medium">Surat Masuk</span>
+                </button>
+                <button onclick="switchTab('surat-keluar')" id="nav-surat-keluar" class="nav-item w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
+                    <i data-lucide="send" class="w-5 h-5"></i>
+                    <span class="sidebar-text font-medium">Surat Keluar</span>
+                </button>
+                <button onclick="switchTab('disposisi')" id="nav-disposisi" class="nav-item w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
+                    <i data-lucide="users" class="w-5 h-5"></i>
+                    <span class="sidebar-text font-medium">Disposisi</span>
+                </button>
+                <button onclick="switchTab('settings')" id="nav-settings" class="nav-item w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
+                    <i data-lucide="settings" class="w-5 h-5"></i>
+                    <span class="sidebar-text font-medium">Pengaturan</span>
+                </button>
+            </nav>
+
+            <div class="p-4 mt-auto">
+                <button onclick="toggleSidebar()" class="w-full flex items-center justify-center p-2 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white">
+                    <i id="sidebar-toggle-icon" data-lucide="menu"></i>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 flex flex-col overflow-hidden">
+            <!-- Header -->
+            <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 shrink-0">
+                <div class="flex items-center flex-1 max-w-md">
+                    <i data-lucide="search" class="text-slate-400 mr-2 w-5 h-5"></i>
+                    <input 
+                        type="text" 
+                        id="search-input"
+                        placeholder="Cari surat, pengirim, atau no agenda..." 
+                        class="w-full border-none focus:ring-0 text-sm outline-none"
+                    >
+                </div>
+                
+                <div class="flex items-center space-x-6">
+                    <div class="flex flex-col items-end hidden sm:flex">
+                        <span class="text-sm font-semibold">Admin Utama</span>
+                        <span class="text-[10px] uppercase tracking-wider text-slate-400 font-bold">System Administrator</span>
+                    </div>
+                    <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold cursor-pointer hover:bg-blue-200 transition-colors">
+                        AU
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <div id="content-area" class="flex-1 overflow-y-auto p-8 custom-scrollbar">
+                <!-- Content will be injected here by JS -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal for adding new item -->
+    <div id="modal-container" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-6 hidden">
+        <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden transform transition-all">
+            <div class="px-8 py-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                <h3 id="modal-title" class="text-xl font-bold text-slate-900">Tambah Surat</h3>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <form id="mail-form" class="p-8 space-y-5">
+                <div class="space-y-1.5">
+                    <label class="text-xs font-bold text-slate-500 uppercase">Judul/Perihal Surat</label>
+                    <input 
+                        id="form-title"
+                        required
+                        type="text" 
+                        placeholder="Contoh: Undangan Koordinasi..."
+                        class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="space-y-1.5">
+                        <label id="label-origin" class="text-xs font-bold text-slate-500 uppercase">Pengirim</label>
+                        <input 
+                            id="form-origin"
+                            required
+                            type="text" 
+                            class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="text-xs font-bold text-slate-500 uppercase">Prioritas</label>
+                        <select 
+                            id="form-priority"
+                            class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-no-repeat bg-[right_1rem_center]"
+                        >
+                            <option value="Low">Low</option>
+                            <option value="Medium" selected>Medium</option>
+                            <option value="High">High</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="space-y-1.5">
+                    <label class="text-xs font-bold text-slate-500 uppercase">Keterangan Singkat</label>
+                    <textarea 
+                        id="form-description"
+                        rows="3"
+                        class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    ></textarea>
+                </div>
+                <div class="pt-4 flex space-x-4">
+                    <button 
+                        type="button"
+                        onclick="closeModal()"
+                        class="flex-1 py-3 border border-slate-200 rounded-xl font-bold text-slate-600 hover:bg-slate-50"
+                    >
+                        Batal
+                    </button>
+                    <button 
+                        type="submit"
+                        class="flex-1 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 shadow-lg shadow-blue-100 active:scale-95 transition-all"
+                    >
+                        Simpan Data
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // --- State Management ---
+        let state = {
+            activeTab: 'dashboard',
+            isSidebarOpen: true,
+            searchTerm: '',
+            data: {
+                incoming: [
+                    { id: 'IN-001', title: 'Undangan Rapat Koordinasi', sender: 'Kementerian Keuangan', date: '2024-03-01', category: 'Undangan', status: 'Pending', priority: 'High', description: 'Pembahasan anggaran tahunan di Jakarta.' },
+                    { id: 'IN-002', title: 'Laporan Proyek Semester 1', sender: 'PT. Maju Bersama', date: '2024-03-05', category: 'Laporan', status: 'Processed', priority: 'Medium', description: 'Progress report pembangunan infrastruktur.' },
+                    { id: 'IN-003', title: 'Permohonan Magang Mahasiswa', sender: 'Universitas Indonesia', date: '2024-03-08', category: 'Permohonan', status: 'Approved', priority: 'Low', description: 'Pengajuan magang untuk 3 mahasiswa Teknik.' },
+                ],
+                outgoing: [
+                    { id: 'OUT-001', title: 'Surat Balasan Kerjasama', recipient: 'PT. Teknologi Jaya', date: '2024-03-02', category: 'Kerjasama', status: 'Sent', priority: 'Medium' },
+                    { id: 'OUT-002', title: 'Pemberitahuan Cuti Bersama', recipient: 'Seluruh Karyawan', date: '2024-03-07', category: 'Internal', status: 'Draft', priority: 'High' },
+                ]
             }
-          ],
-          borderables: [],
-          fontEditable: undefined,
-          fontSizeable: undefined
-        }),
-        mapToEditPanelValues: (config) => new Map([
-          ['app_title', config.app_title || defaultConfig.app_title],
-          ['organization_name', config.organization_name || defaultConfig.organization_name]
-        ])
-      });
-    }
+        };
 
-    // Data SDK Implementation
-    const dataHandler = {
-      onDataChanged(data) {
-        suratData = data;
-        currentRecordCount = data.length;
-        updateUI();
-      }
-    };
+        // --- Core Functions ---
 
-    // Initialize Data SDK
-    async function initDataSDK() {
-      if (window.dataSdk) {
-        const result = await window.dataSdk.init(dataHandler);
-        if (!result.isOk) {
-          showToast('Gagal memuat data', 'error');
+        function init() {
+            lucide.createIcons();
+            switchTab('dashboard');
+
+            // Search Event
+            document.getElementById('search-input').addEventListener('input', function(e) {
+                state.searchTerm = e.target.value;
+                updateView();
+            });
+
+            // Form Submit
+            document.getElementById('mail-form').addEventListener('submit', handleAddMail);
         }
-      }
-    }
-    initDataSDK();
 
-    // UI Functions
-    function showView(view) {
-      document.querySelectorAll('[id^="view-"]').forEach(el => el.classList.add('hidden'));
-      document.getElementById(`view-${view}`).classList.remove('hidden');
-      
-      // Update sidebar active state
-      document.querySelectorAll('.sidebar-item').forEach(el => {
-        el.classList.remove('bg-blue-600/20', 'border', 'border-blue-500/30', 'text-white');
-        el.classList.add('text-slate-300');
-      });
-    }
+        function toggleSidebar() {
+            state.isSidebarOpen = !state.isSidebarOpen;
+            const sidebar = document.getElementById('sidebar');
+            const toggleIcon = document.getElementById('sidebar-toggle-icon');
+            const textElements = document.querySelectorAll('.sidebar-text');
 
-    function updateUI() {
-      updateStats();
-      updateRecentLetters();
-      updateSuratMasuk();
-      updateSuratKeluar();
-      updateDisposisi();
-    }
+            if (state.isSidebarOpen) {
+                sidebar.classList.remove('w-20');
+                sidebar.classList.add('w-64');
+                toggleIcon.setAttribute('data-lucide', 'menu');
+                textElements.forEach(function(el) { el.classList.remove('hidden'); });
+            } else {
+                sidebar.classList.remove('w-64');
+                sidebar.classList.add('w-20');
+                toggleIcon.setAttribute('data-lucide', 'menu'); 
+                textElements.forEach(function(el) { el.classList.add('hidden'); });
+            }
+            lucide.createIcons();
+        }
 
-    function updateStats() {
-      const masuk = suratData.filter(s => s.jenis_surat === 'masuk').length;
-      const keluar = suratData.filter(s => s.jenis_surat === 'keluar').length;
-      const proses = suratData.filter(s => s.status === 'diproses').length;
-      const selesai = suratData.filter(s => s.status === 'selesai').length;
+        function switchTab(tabId) {
+            state.activeTab = tabId;
+            
+            // Update Active Nav Style
+            document.querySelectorAll('.nav-item').forEach(function(el) { el.classList.remove('active-nav'); });
+            document.getElementById('nav-' + tabId).classList.add('active-nav');
 
-      document.getElementById('stat-masuk').textContent = masuk;
-      document.getElementById('stat-keluar').textContent = keluar;
-      document.getElementById('stat-proses').textContent = proses;
-      document.getElementById('stat-selesai').textContent = selesai;
-    }
+            updateView();
+        }
 
-    function createSuratCard(surat) {
-      const priorityClass = surat.prioritas === 'tinggi' ? 'priority-high' : 
-                           surat.prioritas === 'sedang' ? 'priority-medium' : 'priority-low';
-      const statusBadge = surat.status === 'baru' ? 'bg-blue-100 text-blue-700' :
-                         surat.status === 'diproses' ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700';
-      const statusText = surat.status === 'baru' ? 'Baru' : 
-                        surat.status === 'diproses' ? 'Diproses' : 'Selesai';
-      const typeIcon = surat.jenis_surat === 'masuk' ? 
-        '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>' :
-        '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>';
+        function getBadgeClass(val) {
+            const styles = {
+                High: 'bg-red-100 text-red-700',
+                Medium: 'bg-amber-100 text-amber-700',
+                Low: 'bg-green-100 text-green-700',
+                Pending: 'bg-slate-100 text-slate-700',
+                Processed: 'bg-blue-100 text-blue-700',
+                Approved: 'bg-emerald-100 text-emerald-700',
+                Sent: 'bg-indigo-100 text-indigo-700',
+                Draft: 'bg-gray-100 text-gray-700',
+            };
+            return 'px-2.5 py-0.5 rounded-full text-xs font-semibold ' + (styles[val] || styles.Pending);
+        }
 
-      return `
-        <div class="table-row p-4 ${priorityClass} transition-colors" data-id="${surat.__backendId}">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-4">
-              <div class="w-10 h-10 rounded-xl ${surat.jenis_surat === 'masuk' ? 'bg-blue-100' : 'bg-emerald-100'} flex items-center justify-center flex-shrink-0">
-                <svg class="w-5 h-5 ${surat.jenis_surat === 'masuk' ? 'text-blue-600' : 'text-emerald-600'}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  ${typeIcon}
-                </svg>
-              </div>
-              <div class="min-w-0">
-                <div class="flex items-center gap-2 mb-1">
-                  <span class="font-semibold text-slate-800 truncate">${escapeHtml(surat.nomor_surat)}</span>
-                  <span class="text-xs font-medium ${statusBadge} px-2 py-0.5 rounded-full flex-shrink-0">${statusText}</span>
+        function updateView() {
+            const container = document.getElementById('content-area');
+            
+            if (state.activeTab === 'dashboard') {
+                renderDashboard(container);
+            } else if (state.activeTab === 'surat-masuk' || state.activeTab === 'surat-keluar') {
+                renderTable(container);
+            } else if (state.activeTab === 'disposisi') {
+                renderEmpty(container, 'Users', 'Alur Disposisi', 'Modul disposisi digunakan untuk meneruskan surat dari atasan ke bawahan dengan instruksi khusus.');
+            } else if (state.activeTab === 'settings') {
+                renderSettings(container);
+            }
+
+            lucide.createIcons();
+        }
+
+        // --- Render Views ---
+
+        function renderDashboard(container) {
+            const recentActivities = [...state.data.incoming, ...state.data.outgoing].slice(0, 4);
+            const priorities = ['High', 'Medium', 'Low'];
+
+            container.innerHTML = `
+                <div class="space-y-8 animate-in fade-in duration-500">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
+                        <div>
+                            <h2 class="text-2xl font-bold text-slate-900">Ringkasan Sistem</h2>
+                            <p class="text-slate-500 mt-1">Data statistik persuratan periode Maret 2024</p>
+                        </div>
+                        <button class="flex items-center px-4 py-2 border border-slate-200 rounded-lg bg-white text-sm font-medium hover:bg-slate-50">
+                            <i data-lucide="calendar" class="mr-2 w-4 h-4"></i>
+                            7 Hari Terakhir
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        ${renderStatCard('Total Surat Masuk', state.data.incoming.length, 'inbox', '12%', 'bg-blue-600')}
+                        ${renderStatCard('Total Surat Keluar', state.data.outgoing.length, 'send', '5%', 'bg-emerald-600')}
+                        ${renderStatCard('Pending Disposisi', '14', 'clock', '2%', 'bg-amber-500')}
+                        ${renderStatCard('Arsip Tersimpan', '1.2k', 'file-text', '18%', 'bg-indigo-600')}
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        <div class="lg:col-span-2 bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+                            <h3 class="font-bold text-lg mb-6 flex items-center text-slate-800">
+                                <i data-lucide="clock" class="mr-2 text-blue-600 w-5 h-5"></i>
+                                Aktivitas Terbaru
+                            </h3>
+                            <div class="space-y-6">
+                                ${recentActivities.map(function(item) {
+                                    return `
+                                    <div class="flex items-start space-x-4 border-l-2 border-slate-100 pl-4 relative">
+                                        <div class="absolute -left-[5px] top-0 w-2 h-2 rounded-full bg-blue-500"></div>
+                                        <div class="flex-1">
+                                            <div class="flex justify-between">
+                                                <h4 class="font-semibold text-slate-900 text-sm">${item.title}</h4>
+                                                <span class="text-xs text-slate-400">${item.date}</span>
+                                            </div>
+                                            <p class="text-xs text-slate-500 mt-1">${item.sender ? 'Diterima dari: ' + item.sender : 'Dikirim ke: ' + item.recipient}</p>
+                                            <div class="mt-2">
+                                                <span class="${getBadgeClass(item.status)}">${item.status}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+                            <h3 class="font-bold text-lg mb-6 text-slate-800">Distribusi Prioritas</h3>
+                            <div class="space-y-4">
+                                ${priorities.map(function(p) {
+                                    const percentage = p === 'High' ? '25%' : p === 'Medium' ? '50%' : '25%';
+                                    const color = p === 'High' ? 'bg-red-500' : p === 'Medium' ? 'bg-amber-500' : 'bg-green-500';
+                                    return `
+                                    <div>
+                                        <div class="flex justify-between text-sm mb-1">
+                                            <span class="font-medium text-slate-600">${p} Priority</span>
+                                            <span class="text-slate-400">${percentage}</span>
+                                        </div>
+                                        <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                                            <div class="h-full ${color}" style="width: ${percentage}"></div>
+                                        </div>
+                                    </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <p class="text-slate-600 text-sm truncate">${escapeHtml(surat.perihal)}</p>
-                <div class="flex items-center gap-4 mt-1 text-xs text-slate-400">
-                  <span>${surat.jenis_surat === 'masuk' ? 'Dari' : 'Kepada'}: ${escapeHtml(surat.jenis_surat === 'masuk' ? surat.pengirim : surat.penerima)}</span>
-                  <span>${formatDate(surat.tanggal)}</span>
+            `;
+        }
+
+        function renderStatCard(title, value, icon, trend, colorClass) {
+            return `
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-sm font-medium text-slate-500">${title}</p>
+                            <h3 class="text-2xl font-bold mt-1 text-slate-900">${value}</h3>
+                        </div>
+                        <div class="${colorClass} p-3 rounded-lg">
+                            <i data-lucide="${icon}" class="text-white w-6 h-6"></i>
+                        </div>
+                    </div>
+                    <div class="mt-4 flex items-center text-xs font-medium">
+                        <span class="text-emerald-500 flex items-center">
+                            <i data-lucide="arrow-up-right" class="mr-1 w-3 h-3"></i> ${trend}
+                        </span>
+                        <span class="text-slate-400 ml-2">dari bulan lalu</span>
+                    </div>
                 </div>
-              </div>
-            </div>
-            <div class="flex items-center gap-2 flex-shrink-0">
-              <button onclick="editSurat('${surat.__backendId}')" class="w-9 h-9 rounded-lg hover:bg-slate-100 flex items-center justify-center transition-colors" title="Edit">
-                <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                </svg>
-              </button>
-              <button onclick="confirmDelete('${surat.__backendId}')" class="w-9 h-9 rounded-lg hover:bg-red-50 flex items-center justify-center transition-colors" title="Hapus">
-                <svg class="w-4 h-4 text-slate-400 hover:text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                </svg>
-              </button>
-            </div>
-          </div>
-        </div>
-      `;
-    }
-
-    function updateRecentLetters() {
-      const container = document.getElementById('recent-letters');
-      const recent = [...suratData].sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal)).slice(0, 5);
-      
-      if (recent.length === 0) {
-        container.innerHTML = `
-          <div class="text-center py-12 text-slate-400">
-            <svg class="w-16 h-16 mx-auto mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-            </svg>
-            <p class="font-medium">Belum ada surat</p>
-            <p class="text-sm">Klik tombol "Tambah Surat" untuk membuat surat baru</p>
-          </div>
-        `;
-        return;
-      }
-      
-      container.innerHTML = recent.map(createSuratCard).join('');
-    }
-
-    function updateSuratMasuk() {
-      const container = document.getElementById('list-surat-masuk');
-      const masuk = suratData.filter(s => s.jenis_surat === 'masuk');
-      
-      if (masuk.length === 0) {
-        container.innerHTML = '<div class="text-center py-12 text-slate-400"><p class="font-medium">Belum ada surat masuk</p></div>';
-        return;
-      }
-      
-      container.innerHTML = masuk.map(createSuratCard).join('');
-    }
-
-    function updateSuratKeluar() {
-      const container = document.getElementById('list-surat-keluar');
-      const keluar = suratData.filter(s => s.jenis_surat === 'keluar');
-      
-      if (keluar.length === 0) {
-        container.innerHTML = '<div class="text-center py-12 text-slate-400"><p class="font-medium">Belum ada surat keluar</p></div>';
-        return;
-      }
-      
-      container.innerHTML = keluar.map(createSuratCard).join('');
-    }
-
-    function updateDisposisi() {
-      const container = document.getElementById('list-disposisi');
-      const disposisi = suratData.filter(s => s.status === 'diproses');
-      
-      if (disposisi.length === 0) {
-        container.innerHTML = '<div class="text-center py-12 text-slate-400"><p class="font-medium">Belum ada disposisi</p></div>';
-        return;
-      }
-      
-      container.innerHTML = disposisi.map(createSuratCard).join('');
-    }
-
-    // Modal Functions
-    function openModal(type = null) {
-      editingId = null;
-      document.getElementById('surat-form').reset();
-      document.getElementById('surat-id').value = '';
-      document.getElementById('modal-title').textContent = 'Tambah Surat Baru';
-      document.getElementById('tanggal').value = new Date().toISOString().split('T')[0];
-      
-      if (type) {
-        document.getElementById('jenis-surat').value = type;
-      }
-      
-      document.getElementById('modal').classList.remove('hidden');
-      document.getElementById('modal').classList.add('flex');
-    }
-
-    function closeModal() {
-      document.getElementById('modal').classList.add('hidden');
-      document.getElementById('modal').classList.remove('flex');
-      editingId = null;
-    }
-
-    function editSurat(id) {
-      const surat = suratData.find(s => s.__backendId === id);
-      if (!surat) return;
-
-      editingId = id;
-      document.getElementById('surat-id').value = id;
-      document.getElementById('modal-title').textContent = 'Edit Surat';
-      document.getElementById('jenis-surat').value = surat.jenis_surat;
-      document.getElementById('nomor-surat').value = surat.nomor_surat;
-      document.getElementById('perihal').value = surat.perihal;
-      document.getElementById('pengirim').value = surat.pengirim;
-      document.getElementById('penerima').value = surat.penerima;
-      document.getElementById('tanggal').value = surat.tanggal;
-      document.getElementById('prioritas').value = surat.prioritas;
-      document.getElementById('status').value = surat.status;
-      document.getElementById('catatan').value = surat.catatan || '';
-
-      document.getElementById('modal').classList.remove('hidden');
-      document.getElementById('modal').classList.add('flex');
-    }
-
-    function confirmDelete(id) {
-      deleteId = id;
-      document.getElementById('delete-modal').classList.remove('hidden');
-      document.getElementById('delete-modal').classList.add('flex');
-    }
-
-    function closeDeleteModal() {
-      document.getElementById('delete-modal').classList.add('hidden');
-      document.getElementById('delete-modal').classList.remove('flex');
-      deleteId = null;
-    }
-
-    // Form Submit Handler
-    document.getElementById('surat-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      
-      if (currentRecordCount >= 999 && !editingId) {
-        showToast('Batas maksimum 999 surat tercapai', 'error');
-        return;
-      }
-
-      const submitBtn = document.getElementById('submit-btn');
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'Menyimpan...';
-
-      const formData = {
-        nomor_surat: document.getElementById('nomor-surat').value,
-        jenis_surat: document.getElementById('jenis-surat').value,
-        perihal: document.getElementById('perihal').value,
-        pengirim: document.getElementById('pengirim').value,
-        penerima: document.getElementById('penerima').value,
-        tanggal: document.getElementById('tanggal').value,
-        prioritas: document.getElementById('prioritas').value,
-        status: document.getElementById('status').value,
-        catatan: document.getElementById('catatan').value
-      };
-
-      try {
-        let result;
-        if (editingId) {
-          const existing = suratData.find(s => s.__backendId === editingId);
-          result = await window.dataSdk.update({ ...existing, ...formData });
-        } else {
-          result = await window.dataSdk.create(formData);
+            `;
         }
 
-        if (result.isOk) {
-          showToast(editingId ? 'Surat berhasil diperbarui!' : 'Surat berhasil disimpan!');
-          closeModal();
-        } else {
-          showToast('Gagal menyimpan surat', 'error');
+        function renderTable(container) {
+            const list = state.activeTab === 'surat-masuk' ? state.data.incoming : state.data.outgoing;
+            const filtered = list.filter(function(item) {
+                return item.title.toLowerCase().indexOf(state.searchTerm.toLowerCase()) !== -1 ||
+                (item.sender || item.recipient).toLowerCase().indexOf(state.searchTerm.toLowerCase()) !== -1;
+            });
+
+            container.innerHTML = `
+                <div class="animate-in slide-in-from-bottom-4 duration-500">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+                        <div>
+                            <h2 class="text-2xl font-bold text-slate-900">${state.activeTab === 'surat-masuk' ? 'Surat Masuk' : 'Surat Keluar'}</h2>
+                            <p class="text-slate-500 mt-1">Mengelola daftar korespondensi resmi.</p>
+                        </div>
+                        <button onclick="openModal()" class="flex items-center px-6 py-2.5 bg-blue-600 text-white rounded-lg font-bold shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all active:scale-95">
+                            <i data-lucide="plus" class="mr-2 w-5 h-5"></i>
+                            Tambah Baru
+                        </button>
+                    </div>
+
+                    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                        <div class="px-6 py-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
+                            <span class="text-sm font-semibold text-slate-600">Menampilkan ${filtered.length} Dokumen</span>
+                            <button class="text-slate-400 hover:text-slate-600"><i data-lucide="filter" class="w-5 h-5"></i></button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left whitespace-nowrap">
+                                <thead>
+                                    <tr class="bg-white text-slate-400 text-[11px] uppercase tracking-widest font-bold">
+                                        <th class="px-6 py-4">Informasi Surat</th>
+                                        <th class="px-6 py-4">Asal/Tujuan</th>
+                                        <th class="px-6 py-4">Tgl & Kat</th>
+                                        <th class="px-6 py-4">Status</th>
+                                        <th class="px-6 py-4 text-right">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100">
+                                    ${filtered.map(function(item) {
+                                        return `
+                                        <tr class="hover:bg-slate-50 transition-colors group">
+                                            <td class="px-6 py-4">
+                                                <div class="flex flex-col">
+                                                    <span class="font-bold text-slate-900 leading-tight mb-1">${item.title}</span>
+                                                    <span class="text-xs text-blue-600 font-mono font-medium">${item.id}</span>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <div class="flex items-center text-sm font-medium text-slate-600">
+                                                    <i data-lucide="${item.sender ? 'arrow-down-left' : 'arrow-up-right'}" class="mr-2 w-4 h-4 ${item.sender ? 'text-blue-500' : 'text-emerald-500'}"></i>
+                                                    ${item.sender || item.recipient}
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <div class="flex flex-col">
+                                                    <span class="text-sm text-slate-600 font-medium">${item.date}</span>
+                                                    <span class="text-xs text-slate-400">${item.category || 'Umum'}</span>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <span class="${getBadgeClass(item.status)}">${item.status}</span>
+                                            </td>
+                                            <td class="px-6 py-4 text-right">
+                                                <div class="flex justify-end space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                    <button class="p-2 hover:bg-blue-50 text-blue-600 rounded-md transition-colors"><i data-lucide="eye" class="w-4 h-4"></i></button>
+                                                    <button class="p-2 hover:bg-slate-100 text-slate-400 rounded-md transition-colors"><i data-lucide="download" class="w-4 h-4"></i></button>
+                                                    <button onclick="deleteItem('${item.id}')" class="p-2 hover:bg-red-50 text-red-600 rounded-md transition-colors"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        `;
+                                    }).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                        ${filtered.length === 0 ? `
+                            <div class="py-20 flex flex-col items-center justify-center text-slate-400">
+                                <i data-lucide="inbox" class="mb-4 stroke-[1.5] w-12 h-12"></i>
+                                <p class="font-medium text-lg text-slate-500">Tidak ada surat ditemukan</p>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
         }
-      } catch (error) {
-        showToast('Terjadi kesalahan', 'error');
-      }
 
-      submitBtn.disabled = false;
-      submitBtn.textContent = 'Simpan Surat';
-    });
-
-    // Delete Handler
-    document.getElementById('confirm-delete-btn').addEventListener('click', async () => {
-      if (!deleteId) return;
-
-      const btn = document.getElementById('confirm-delete-btn');
-      btn.disabled = true;
-      btn.textContent = 'Menghapus...';
-
-      const surat = suratData.find(s => s.__backendId === deleteId);
-      if (surat) {
-        const result = await window.dataSdk.delete(surat);
-        if (result.isOk) {
-          showToast('Surat berhasil dihapus!');
-        } else {
-          showToast('Gagal menghapus surat', 'error');
+        function renderSettings(container) {
+            container.innerHTML = `
+                <div class="bg-white rounded-xl border border-slate-200 p-8 shadow-sm max-w-2xl mx-auto mt-10">
+                    <h2 class="text-xl font-bold mb-6">Profil Instansi</h2>
+                    <div class="space-y-6">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="space-y-2">
+                                <label class="text-xs font-bold text-slate-400 uppercase">Nama Instansi</label>
+                                <input type="text" value="Dinas Komunikasi & Informatika" class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" />
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-xs font-bold text-slate-400 uppercase">Kode Instansi</label>
+                                <input type="text" value="KOMINFO-01" class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" />
+                            </div>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-xs font-bold text-slate-400 uppercase">Logo Instansi</label>
+                            <div class="w-full h-32 border-2 border-dashed border-slate-200 rounded-xl flex items-center justify-center text-slate-400 cursor-pointer hover:bg-slate-50">
+                                Unggah Logo Baru
+                            </div>
+                        </div>
+                        <button class="w-full py-3 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 transition-colors shadow-lg shadow-blue-100">
+                            Simpan Perubahan
+                        </button>
+                    </div>
+                </div>
+            `;
         }
-      }
 
-      btn.disabled = false;
-      btn.textContent = 'Hapus';
-      closeDeleteModal();
-    });
+        function renderEmpty(container, icon, title, desc) {
+            container.innerHTML = `
+                <div class="flex flex-col items-center justify-center h-full text-slate-400 animate-in fade-in duration-700">
+                    <div class="w-24 h-24 bg-blue-50 rounded-full flex items-center justify-center mb-6 text-blue-500">
+                        <i data-lucide="${icon.toLowerCase()}" class="w-10 h-10"></i>
+                    </div>
+                    <h2 class="text-xl font-bold text-slate-900">${title}</h2>
+                    <p class="text-slate-500 max-w-sm text-center mt-2 leading-relaxed">${desc}</p>
+                    <button class="mt-8 px-6 py-2 bg-slate-900 text-white rounded-lg font-bold hover:bg-slate-800 transition-colors">
+                        Mulai Konfigurasi
+                    </button>
+                </div>
+            `;
+        }
 
-    // Utility Functions
-    function formatDate(dateStr) {
-      const options = { day: 'numeric', month: 'short', year: 'numeric' };
-      return new Date(dateStr).toLocaleDateString('id-ID', options);
-    }
+        // --- Event Handlers ---
 
-    function escapeHtml(text) {
-      const div = document.createElement('div');
-      div.textContent = text;
-      return div.innerHTML;
-    }
+        function openModal() {
+            const isMasuk = state.activeTab === 'surat-masuk';
+            document.getElementById('modal-title').innerText = isMasuk ? 'Tambah Surat Masuk' : 'Tambah Surat Keluar';
+            document.getElementById('label-origin').innerText = isMasuk ? 'Pengirim' : 'Penerima';
+            document.getElementById('modal-container').classList.remove('hidden');
+            lucide.createIcons();
+        }
 
-    function showToast(message, type = 'success') {
-      const toast = document.getElementById('toast');
-      const icon = document.getElementById('toast-icon');
-      const msg = document.getElementById('toast-message');
-      
-      msg.textContent = message;
-      
-      if (type === 'error') {
-        icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>';
-        icon.classList.remove('text-emerald-400');
-        icon.classList.add('text-red-400');
-      } else {
-        icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>';
-        icon.classList.remove('text-red-400');
-        icon.classList.add('text-emerald-400');
-      }
-      
-      toast.classList.remove('translate-y-20', 'opacity-0');
-      
-      setTimeout(() => {
-        toast.classList.add('translate-y-20', 'opacity-0');
-      }, 3000);
-    }
-  </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d9ef313d02011c9',t:'MTc3MzExMDM3Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+        function closeModal() {
+            document.getElementById('modal-container').classList.add('hidden');
+            document.getElementById('mail-form').reset();
+        }
+
+        function handleAddMail(e) {
+            e.preventDefault();
+            const type = state.activeTab === 'surat-masuk' ? 'incoming' : 'outgoing';
+            const idPrefix = type === 'incoming' ? 'IN' : 'OUT';
+            
+            const newItem = {
+                id: idPrefix + '-' + Math.floor(100 + Math.random() * 900),
+                title: document.getElementById('form-title').value,
+                date: new Date().toISOString().split('T')[0],
+                priority: document.getElementById('form-priority').value,
+                description: document.getElementById('form-description').value,
+                status: type === 'incoming' ? 'Pending' : 'Draft',
+                category: 'Umum'
+            };
+
+            if (type === 'incoming') {
+                newItem.sender = document.getElementById('form-origin').value;
+            } else {
+                newItem.recipient = document.getElementById('form-origin').value;
+            }
+
+            state.data[type].unshift(newItem);
+            closeModal();
+            updateView();
+        }
+
+        function deleteItem(id) {
+            const type = id.indexOf('IN') === 0 ? 'incoming' : 'outgoing';
+            state.data[type] = state.data[type].filter(function(item) { return item.id !== id; });
+            updateView();
+        }
+
+        // Boot
+        window.onload = init;
+    </script>
+</body>
 </html>
