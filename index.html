@@ -162,22 +162,67 @@
                 incomingSchool: [
                     { 
                         id: 'SMS-001', 
-                        dateReceived: '2024-03-01', 
-                        schoolName: 'SMK Cyberjaya', 
-                        title: 'Minit Mesyuarat Guru Bil 1/2024', 
-                        refNumber: 'SMKC/100-1/2/1 (01) - 28/02/2024', 
-                        sector: 'Kurikulum', 
-                        officer: 'En. Razak', 
+                        dateReceived: '31.07.2024 (RABU)', 
+                        schoolName: 'SMK AGAMA LIMBANG', 
+                        title: 'JEMPUTAN SEBAGAI MAJLIS PENUTUPAN KEM MOTIVASI DAN AKADEMIK SPM SIRI 1/2024', 
+                        refNumber: 'SMKAL.600-3/2/1( ) - 29.07.2024', 
+                        sector: 'PPD', 
+                        officer: 'TN PPD', 
                         status: 'Sudah diminit', 
-                        ppdNotes: 'Telah disemak oleh Unit Menengah', 
-                        registryNo: 'JPN/S/1234'
+                        ppdNotes: 'HADIR', 
+                        registryNo: '-'
+                    },
+                    { 
+                        id: 'SMS-002', 
+                        dateReceived: '31.07.2024 (RABU)', 
+                        schoolName: 'SMK SERI PATIAMBUN', 
+                        title: 'JEMPUTAN KE MAJLIS PERASMIAN PESTA PSKPP DAERAH LIMBANG TAHUN 2024', 
+                        refNumber: 'SMKSP.100-13/1/2(26)', 
+                        sector: 'Sektor Pembangunan Murid', 
+                        officer: 'TN PPD / SEMUA TPPD', 
+                        status: 'Sudah diminit', 
+                        ppdNotes: 'HADIR', 
+                        registryNo: '-'
                     }
                 ],
                 incomingExternal: [
-                    { id: 'SMJ-001', title: 'Surat Pekeliling Ikhtisas Bil 2/2024', sender: 'KPM / JPN', date: '2024-03-02', category: 'Pekeliling', status: 'Dalam proses', priority: 'High', description: 'Pekeliling mengenai garis panduan disiplin murid.' }
+                    { 
+                        id: 'SMJ-001', 
+                        dateReceived: '26.07.2024 (JUMAAT)', 
+                        sender: 'KPM', 
+                        title: 'PELAKSANAAN PEMANTAUAN BERSEPADU DI SEKOLAH ANTARA PIHAK KPM DAN KKM BAGI AKTIVITI PEMAKANAN (FASA 1 2024)', 
+                        refNumber: 'KPM.700-17/1/17 JLD.4(88) - 24.07.2024', 
+                        sector: 'Sektor Pembangunan Murid', 
+                        officer: 'SPbM', 
+                        status: 'Sudah diminit', 
+                        ppdNotes: 'UNTUK TINDAKAN', 
+                        registryNo: '-'
+                    },
+                    { 
+                        id: 'SMJ-002', 
+                        dateReceived: '26.07.2024 (JUMAAT)', 
+                        sender: 'JPN SARAWAK', 
+                        title: 'PEMBATALAN PENGGUNAAN PENDAPATAN GARIS PANDUAN KEMISKINAN (PGK) NASIONAL 2022 BAGI RANCANGAN MAKANAN TAMBAHAN (RMT) TAHUN 2024', 
+                        refNumber: 'JPNSW(SPM).600-4/1/1 Jld.2(44) - 22.07.2024', 
+                        sector: 'Sektor Pembangunan Murid', 
+                        officer: 'SPbM', 
+                        status: 'Sudah diminit', 
+                        ppdNotes: 'UNTUK TINDAKAN', 
+                        registryNo: '-'
+                    }
                 ],
                 outgoing: [
-                    { id: 'SK-001', title: 'Surat Jemputan Perasmian Hari Sukan', recipient: 'PPD / YDP PIBG', date: '2024-03-10', category: 'Acara', status: 'Selesai', priority: 'Medium' }
+                    { 
+                        id: 'SK-001', 
+                        dateSent: '02/07/2024', 
+                        fromSector: 'Sektor Pengurusan', 
+                        title: 'Kelulusan Permohonan Bayaran Balik Imbuhan Perumahan Wilayah (BIPW) Nur Suhana binti Sahimin', 
+                        refNumber: 'PPDL.400-4/5/1 (28) 02.07.2024', 
+                        recipient: 'Sk Meritam', 
+                        status: 'Selesai', 
+                        method: 'Peti Surat Sekolah',
+                        notes: '-'
+                    }
                 ]
             }
         };
@@ -188,7 +233,7 @@
             'Dalam proses': { class: 'bg-amber-100 text-amber-700', icon: 'clock' },
             'Selesai': { class: 'bg-green-100 text-green-700', icon: 'check-circle' },
             'Dikembalikan': { class: 'bg-red-100 text-red-700', icon: 'rotate-ccw' },
-            'Pending': { class: 'bg-slate-100 text-slate-700', icon: 'clock' },
+            'Draft': { class: 'bg-slate-100 text-slate-700', icon: 'file' },
             'Sent': { class: 'bg-indigo-100 text-indigo-700', icon: 'send' }
         };
 
@@ -229,8 +274,8 @@
         function renderStatusBadge(status) {
             const config = statusConfig[status] || { class: 'bg-gray-100 text-gray-700', icon: 'help-circle' };
             return `
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${config.class} border-current/10">
-                    <i data-lucide="${config.icon}" class="w-3 h-3 mr-1.5"></i>
+                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold border ${config.class} border-current/10">
+                    <i data-lucide="${config.icon}" class="w-3 h-3 mr-1"></i>
                     ${status}
                 </span>
             `;
@@ -267,27 +312,52 @@
                         ${renderStatCard('Tertunda', '14', 'clock', 'bg-amber-500')}
                     </div>
                     
-                    <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
-                        <h3 class="font-bold text-lg mb-6 flex items-center text-slate-800">
-                            <i data-lucide="clock" class="mr-2 text-blue-600 w-5 h-5"></i>
-                            Log Aktiviti Terkini (Sekolah)
-                        </h3>
-                        <div class="space-y-6">
-                            ${state.data.incomingSchool.slice(0, 3).map(item => `
-                                <div class="flex items-start space-x-4 border-l-2 border-slate-100 pl-4 relative">
-                                    <div class="absolute -left-[5px] top-0 w-2 h-2 rounded-full bg-blue-500"></div>
-                                    <div class="flex-1">
-                                        <div class="flex justify-between">
-                                            <h4 class="font-semibold text-slate-900 text-sm">${item.title}</h4>
-                                            <span class="text-xs text-slate-400">Diterima: ${item.dateReceived}</span>
-                                        </div>
-                                        <p class="text-xs text-slate-500 mt-1">Asal: ${item.schoolName} | No Fail: ${item.registryNo || '-'}</p>
-                                        <div class="mt-2">
-                                            ${renderStatusBadge(item.status)}
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+                            <h3 class="font-bold text-lg mb-6 flex items-center text-slate-800">
+                                <i data-lucide="clock" class="mr-2 text-blue-600 w-5 h-5"></i>
+                                Log Surat Sekolah Terkini
+                            </h3>
+                            <div class="space-y-6">
+                                ${state.data.incomingSchool.slice(0, 3).map(item => `
+                                    <div class="flex items-start space-x-4 border-l-2 border-slate-100 pl-4 relative">
+                                        <div class="absolute -left-[5px] top-0 w-2 h-2 rounded-full bg-blue-500"></div>
+                                        <div class="flex-1">
+                                            <div class="flex justify-between">
+                                                <h4 class="font-semibold text-slate-900 text-xs">${item.title}</h4>
+                                                <span class="text-[10px] text-slate-400 shrink-0">${item.dateReceived.split(' ')[0]}</span>
+                                            </div>
+                                            <p class="text-[10px] text-slate-500 mt-1 uppercase font-bold tracking-tight">${item.schoolName}</p>
+                                            <div class="mt-2">
+                                                ${renderStatusBadge(item.status)}
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            `).join('')}
+                                `).join('')}
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+                            <h3 class="font-bold text-lg mb-6 flex items-center text-slate-800">
+                                <i data-lucide="send" class="mr-2 text-emerald-600 w-5 h-5"></i>
+                                Log Surat Keluar Terkini
+                            </h3>
+                            <div class="space-y-6">
+                                ${state.data.outgoing.slice(0, 3).map(item => `
+                                    <div class="flex items-start space-x-4 border-l-2 border-slate-100 pl-4 relative">
+                                        <div class="absolute -left-[5px] top-0 w-2 h-2 rounded-full bg-emerald-500"></div>
+                                        <div class="flex-1">
+                                            <div class="flex justify-between">
+                                                <h4 class="font-semibold text-slate-900 text-xs">${item.title}</h4>
+                                                <span class="text-[10px] text-slate-400 shrink-0">${item.dateSent}</span>
+                                            </div>
+                                            <p class="text-[10px] text-slate-500 mt-1 uppercase font-bold tracking-tight">Kepada: ${item.recipient}</p>
+                                            <div class="mt-2">
+                                                ${renderStatusBadge(item.status)}
+                                            </div>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -313,27 +383,25 @@
         function renderTable(container) {
             let list = [];
             let title = "";
-            let sub = "";
             let isSchoolMail = state.activeTab === 'surat-masuk-sekolah';
+            let isExternalMail = state.activeTab === 'surat-masuk-jabatan';
             
             if (isSchoolMail) {
                 list = state.data.incomingSchool;
                 title = "Rekod Surat Masuk Sekolah";
-                sub = "Pecahan rekod mengikut Tarikh Terima, Rujukan, dan Tindakan Pegawai.";
-            } else if (state.activeTab === 'surat-masuk-jabatan') {
+            } else if (isExternalMail) {
                 list = state.data.incomingExternal;
-                title = "Surat Masuk Jabatan & Luar";
-                sub = "Rekod surat rasmi dari JPN, PPD, KPM dan agensi luar.";
+                title = "Rekod Surat Masuk Jabatan & Agensi Luar";
             } else {
                 list = state.data.outgoing;
-                title = "Surat Keluar Sekolah";
-                sub = "Pantau surat rasmi yang dihantar keluar oleh pihak sekolah.";
+                title = "Rekod Surat Keluar Sekolah";
             }
 
             const filtered = list.filter(item => 
-                (item.title && item.title.toLowerCase().indexOf(state.searchTerm.toLowerCase()) !== -1) ||
-                (item.schoolName && item.schoolName.toLowerCase().indexOf(state.searchTerm.toLowerCase()) !== -1) ||
-                (item.sender && item.sender.toLowerCase().indexOf(state.searchTerm.toLowerCase()) !== -1)
+                (item.title && item.title.toLowerCase().includes(state.searchTerm.toLowerCase())) ||
+                (item.schoolName && item.schoolName.toLowerCase().includes(state.searchTerm.toLowerCase())) ||
+                (item.sender && item.sender.toLowerCase().includes(state.searchTerm.toLowerCase())) ||
+                (item.recipient && item.recipient.toLowerCase().includes(state.searchTerm.toLowerCase()))
             );
 
             container.innerHTML = `
@@ -341,22 +409,22 @@
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
                         <div>
                             <h2 class="text-2xl font-bold text-slate-900">${title}</h2>
-                            <p class="text-slate-500 mt-1">${sub}</p>
+                            <p class="text-slate-500 mt-1 text-sm">Menguruskan rekod berdasarkan data rasmi pejabat.</p>
                         </div>
-                        <button onclick="openModal()" class="flex items-center px-6 py-2.5 bg-blue-600 text-white rounded-lg font-bold shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all active:scale-95">
-                            <i data-lucide="plus" class="mr-2 w-5 h-5"></i>
+                        <button onclick="openModal()" class="flex items-center px-6 py-2.5 bg-blue-600 text-white rounded-lg font-bold shadow-lg hover:bg-blue-700 transition-all active:scale-95 text-sm shrink-0">
+                            <i data-lucide="plus" class="mr-2 w-4 h-4"></i>
                             Rekod Baru
                         </button>
                     </div>
 
                     <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
                         <div class="px-6 py-4 border-b border-slate-100 bg-slate-50">
-                            <span class="text-sm font-semibold text-slate-600">Jumlah Rekod: ${filtered.length}</span>
+                            <span class="text-xs font-semibold text-slate-600">JUMLAH REKOD: ${filtered.length}</span>
                         </div>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-left whitespace-nowrap text-xs">
-                                <thead>
-                                    <tr class="bg-white text-slate-400 uppercase tracking-widest font-bold border-b border-slate-100">
+                        <div class="overflow-x-auto custom-scrollbar">
+                            <table class="w-full text-left whitespace-nowrap text-[11px]">
+                                <thead class="bg-white text-slate-400 uppercase tracking-widest font-bold border-b border-slate-100">
+                                    <tr>
                                         ${isSchoolMail ? `
                                             <th class="px-4 py-4">Tarikh Terima</th>
                                             <th class="px-4 py-4">Nama Sekolah</th>
@@ -366,12 +434,24 @@
                                             <th class="px-4 py-4">Status</th>
                                             <th class="px-4 py-4">No Fail Jabatan</th>
                                             <th class="px-4 py-4 text-right">Aksi</th>
+                                        ` : isExternalMail ? `
+                                            <th class="px-4 py-4">Tarikh Terima</th>
+                                            <th class="px-4 py-4">Daripada</th>
+                                            <th class="px-4 py-4">Perkara</th>
+                                            <th class="px-4 py-4">No. Rujukan & Tarikh</th>
+                                            <th class="px-4 py-4">Sektor / Pegawai</th>
+                                            <th class="px-4 py-4">Status</th>
+                                            <th class="px-4 py-4">No Fail Rujukan</th>
+                                            <th class="px-4 py-4 text-right">Aksi</th>
                                         ` : `
-                                            <th class="px-6 py-4">Maklumat Dokumen</th>
-                                            <th class="px-6 py-4">Pihak Terlibat</th>
-                                            <th class="px-6 py-4">Tarikh</th>
-                                            <th class="px-6 py-4">Status</th>
-                                            <th class="px-6 py-4 text-right">Aksi</th>
+                                            <th class="px-4 py-4">Tarikh Keluar</th>
+                                            <th class="px-4 py-4">Dari Sektor</th>
+                                            <th class="px-4 py-4">Perkara</th>
+                                            <th class="px-4 py-4">No. Rujukan</th>
+                                            <th class="px-4 py-4">Kepada</th>
+                                            <th class="px-4 py-4">Status</th>
+                                            <th class="px-4 py-4">Kaedah</th>
+                                            <th class="px-4 py-4 text-right">Aksi</th>
                                         `}
                                     </tr>
                                 </thead>
@@ -380,40 +460,57 @@
                                         <tr class="hover:bg-slate-50 transition-colors group">
                                             <td class="px-4 py-4 font-medium text-slate-900">${item.dateReceived}</td>
                                             <td class="px-4 py-4 text-slate-700 font-semibold">${item.schoolName}</td>
-                                            <td class="px-4 py-4 text-slate-600 whitespace-normal min-w-[200px]">${item.title}</td>
-                                            <td class="px-4 py-4 text-slate-500 font-mono italic">${item.refNumber}</td>
+                                            <td class="px-4 py-4 text-slate-600 whitespace-normal min-w-[200px] font-medium leading-relaxed">${item.title}</td>
+                                            <td class="px-4 py-4 text-slate-500 font-mono italic text-[10px]">${item.refNumber}</td>
                                             <td class="px-4 py-4">
                                                 <div class="flex flex-col">
                                                     <span class="font-bold text-slate-700">${item.sector}</span>
-                                                    <span class="text-slate-400">${item.officer}</span>
+                                                    <span class="text-slate-400 font-medium">${item.officer}</span>
                                                 </div>
                                             </td>
-                                            <td class="px-4 py-4">
-                                                ${renderStatusBadge(item.status)}
-                                            </td>
-                                            <td class="px-4 py-4 font-mono font-bold text-blue-600">${item.registryNo || '-'}</td>
+                                            <td class="px-4 py-4">${renderStatusBadge(item.status)}</td>
+                                            <td class="px-4 py-4 font-mono font-bold text-blue-600 uppercase">${item.registryNo || '-'}</td>
                                             <td class="px-4 py-4 text-right">
                                                 <div class="flex justify-end space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                    <button class="p-2 hover:bg-blue-50 text-blue-600 rounded-md"><i data-lucide="eye" class="w-4 h-4"></i></button>
-                                                    <button onclick="deleteItem('${item.id}')" class="p-2 hover:bg-red-50 text-red-600 rounded-md"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                                                    <button class="p-1.5 hover:bg-blue-50 text-blue-600 rounded-md"><i data-lucide="eye" class="w-3.5 h-3.5"></i></button>
+                                                    <button onclick="deleteItem('${item.id}')" class="p-1.5 hover:bg-red-50 text-red-600 rounded-md"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ` : isExternalMail ? `
+                                        <tr class="hover:bg-slate-50 transition-colors group">
+                                            <td class="px-4 py-4 font-medium text-slate-900">${item.dateReceived}</td>
+                                            <td class="px-4 py-4 text-slate-700 font-semibold">${item.sender}</td>
+                                            <td class="px-4 py-4 text-slate-600 whitespace-normal min-w-[200px] font-medium leading-relaxed">${item.title}</td>
+                                            <td class="px-4 py-4 text-slate-500 font-mono italic text-[10px]">${item.refNumber}</td>
+                                            <td class="px-4 py-4">
+                                                <div class="flex flex-col">
+                                                    <span class="font-bold text-slate-700">${item.sector}</span>
+                                                    <span class="text-slate-400 font-medium">${item.officer}</span>
+                                                </div>
+                                            </td>
+                                            <td class="px-4 py-4">${renderStatusBadge(item.status)}</td>
+                                            <td class="px-4 py-4 font-mono font-bold text-orange-600 uppercase">${item.registryNo || '-'}</td>
+                                            <td class="px-4 py-4 text-right">
+                                                <div class="flex justify-end space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                    <button class="p-1.5 hover:bg-blue-50 text-blue-600 rounded-md"><i data-lucide="eye" class="w-3.5 h-3.5"></i></button>
+                                                    <button onclick="deleteItem('${item.id}')" class="p-1.5 hover:bg-red-50 text-red-600 rounded-md"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
                                                 </div>
                                             </td>
                                         </tr>
                                     ` : `
                                         <tr class="hover:bg-slate-50 transition-colors group">
-                                            <td class="px-6 py-4">
-                                                <div class="flex flex-col">
-                                                    <span class="font-bold text-slate-900 text-sm mb-0.5 whitespace-normal max-w-xs">${item.title}</span>
-                                                    <span class="text-[10px] text-blue-600 font-mono font-bold">${item.id}</span>
-                                                </div>
-                                            </td>
-                                            <td class="px-6 py-4 text-sm font-medium text-slate-600">${item.sender || item.recipient}</td>
-                                            <td class="px-6 py-4 text-sm text-slate-500 font-medium">${item.date}</td>
-                                            <td class="px-6 py-4">${renderStatusBadge(item.status)}</td>
-                                            <td class="px-6 py-4 text-right">
+                                            <td class="px-4 py-4 font-medium text-slate-900">${item.dateSent}</td>
+                                            <td class="px-4 py-4 text-slate-700 font-semibold">${item.fromSector}</td>
+                                            <td class="px-4 py-4 text-slate-600 whitespace-normal min-w-[200px] font-medium leading-relaxed">${item.title}</td>
+                                            <td class="px-4 py-4 text-slate-500 font-mono italic text-[10px]">${item.refNumber}</td>
+                                            <td class="px-4 py-4 text-slate-700 font-semibold whitespace-normal max-w-[150px] leading-snug">${item.recipient}</td>
+                                            <td class="px-4 py-4">${renderStatusBadge(item.status)}</td>
+                                            <td class="px-4 py-4 text-slate-500 font-medium">${item.method || '-'}</td>
+                                            <td class="px-4 py-4 text-right">
                                                 <div class="flex justify-end space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                    <button class="p-2 hover:bg-blue-50 text-blue-600 rounded-md"><i data-lucide="eye" class="w-4 h-4"></i></button>
-                                                    <button onclick="deleteItem('${item.id}')" class="p-2 hover:bg-red-50 text-red-600 rounded-md"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                                                    <button class="p-1.5 hover:bg-blue-50 text-blue-600 rounded-md"><i data-lucide="eye" class="w-3.5 h-3.5"></i></button>
+                                                    <button onclick="deleteItem('${item.id}')" class="p-1.5 hover:bg-red-50 text-red-600 rounded-md"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
                                                 </div>
                                             </td>
                                         </tr>
@@ -436,41 +533,35 @@
                     <div class="grid grid-cols-2 gap-4">
                         <div class="space-y-1.5">
                             <label class="text-xs font-bold text-slate-500 uppercase">Tarikh Terima Surat</label>
-                            <input id="form-date-received" required type="date" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none" />
+                            <input id="form-date-received" required type="text" placeholder="Cth: 10/03/2026" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" />
                         </div>
                         <div class="space-y-1.5">
                             <label class="text-xs font-bold text-slate-500 uppercase">Nama Sekolah</label>
-                            <input id="form-school-name" required type="text" placeholder="Cth: SMK Cyberjaya" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none" />
+                            <input id="form-school-name" required type="text" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" />
                         </div>
                     </div>
                     <div class="space-y-1.5">
                         <label class="text-xs font-bold text-slate-500 uppercase">Perkara</label>
-                        <input id="form-title" required type="text" placeholder="Cth: Minit Mesyuarat PIBG..." class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none" />
+                        <input id="form-title" required type="text" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" />
                     </div>
                     <div class="grid grid-cols-2 gap-4">
                         <div class="space-y-1.5">
                             <label class="text-xs font-bold text-slate-500 uppercase">No. Rujukan & Tarikh</label>
-                            <input id="form-ref" required type="text" placeholder="Cth: SMKC/100-1/2 (01) - 10/02/2024" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none" />
+                            <input id="form-ref" required type="text" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" />
                         </div>
                         <div class="space-y-1.5">
                             <label class="text-xs font-bold text-slate-500 uppercase">Sektor</label>
-                            <select id="form-sector" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none">
-                                <option value="Kurikulum">Kurikulum</option>
-                                <option value="HEM">HEM</option>
-                                <option value="Kokurikulum">Kokurikulum</option>
-                                <option value="Pentadbiran">Pentadbiran</option>
-                                <option value="Sukan">Sukan</option>
-                            </select>
+                            <input id="form-sector" required type="text" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" />
                         </div>
                     </div>
                     <div class="grid grid-cols-2 gap-4">
                         <div class="space-y-1.5">
                             <label class="text-xs font-bold text-slate-500 uppercase">Untuk Tindakan / Nama Pegawai</label>
-                            <input id="form-officer" type="text" placeholder="Nama Pegawai" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none" />
+                            <input id="form-officer" type="text" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" />
                         </div>
                         <div class="space-y-1.5">
                             <label class="text-xs font-bold text-slate-500 uppercase">Status</label>
-                            <select id="form-status" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none">
+                            <select id="form-status" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none">
                                 <option value="Belum diminit">Belum diminit</option>
                                 <option value="Sudah diminit">Sudah diminit</option>
                                 <option value="Dalam proses">Dalam proses</option>
@@ -480,47 +571,84 @@
                         </div>
                     </div>
                     <div class="space-y-1.5">
-                        <label class="text-xs font-bold text-slate-500 uppercase">Catatan PPD</label>
-                        <textarea id="form-ppd-notes" rows="2" placeholder="Catatan Unit PPD..." class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"></textarea>
-                    </div>
-                    <div class="space-y-1.5">
                         <label class="text-xs font-bold text-slate-500 uppercase">Tindakan Registri (No Fail Jabatan)</label>
-                        <input id="form-registry" type="text" placeholder="Cth: JPN/S/12345" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none" />
+                        <input id="form-registry" type="text" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" />
                     </div>
                 `;
-            } else {
-                // Default form for other categories
-                const isKeluar = tab === 'surat-keluar';
-                document.getElementById('modal-title').innerText = tab === 'surat-masuk-jabatan' ? 'Tambah Surat Jabatan' : 'Tambah Surat Keluar';
+            } else if (tab === 'surat-masuk-jabatan') {
+                document.getElementById('modal-title').innerText = 'Daftar Surat Masuk Jabatan';
                 container.innerHTML = `
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="space-y-1.5">
+                            <label class="text-xs font-bold text-slate-500 uppercase">Tarikh Terima</label>
+                            <input id="form-date-received" required type="text" placeholder="Cth: 10/03/2026" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" />
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="text-xs font-bold text-slate-500 uppercase">Daripada</label>
+                            <input id="form-origin" required type="text" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" />
+                        </div>
+                    </div>
                     <div class="space-y-1.5">
-                        <label class="text-xs font-bold text-slate-500 uppercase">Perkara / Tajuk Surat</label>
+                        <label class="text-xs font-bold text-slate-500 uppercase">Perkara</label>
                         <input id="form-title" required type="text" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" />
                     </div>
                     <div class="grid grid-cols-2 gap-4">
                         <div class="space-y-1.5">
-                            <label class="text-xs font-bold text-slate-500 uppercase">${isKeluar ? 'Penerima' : 'Pengirim'}</label>
-                            <input id="form-origin" required type="text" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" />
+                            <label class="text-xs font-bold text-slate-500 uppercase">No. Rujukan & Tarikh</label>
+                            <input id="form-ref" required type="text" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" />
                         </div>
                         <div class="space-y-1.5">
                             <label class="text-xs font-bold text-slate-500 uppercase">Status</label>
                             <select id="form-status" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none">
-                                ${isKeluar ? `
-                                    <option value="Draft">Draf</option>
-                                    <option value="Sent">Dihantar</option>
-                                ` : `
-                                    <option value="Belum diminit">Belum diminit</option>
-                                    <option value="Sudah diminit">Sudah diminit</option>
-                                    <option value="Dalam proses">Dalam proses</option>
-                                    <option value="Selesai">Selesai</option>
-                                    <option value="Dikembalikan">Dikembalikan</option>
-                                `}
+                                <option value="Belum diminit">Belum diminit</option>
+                                <option value="Sudah diminit">Sudah diminit</option>
+                                <option value="Selesai">Selesai</option>
                             </select>
                         </div>
                     </div>
                     <div class="space-y-1.5">
-                        <label class="text-xs font-bold text-slate-500 uppercase">Catatan</label>
-                        <textarea id="form-description" rows="2" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none"></textarea>
+                        <label class="text-xs font-bold text-slate-500 uppercase">No. Fail Rujukan Pejabat</label>
+                        <input id="form-registry" type="text" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" />
+                    </div>
+                `;
+            } else {
+                document.getElementById('modal-title').innerText = 'Daftar Surat Keluar Sekolah';
+                container.innerHTML = `
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="space-y-1.5">
+                            <label class="text-xs font-bold text-slate-500 uppercase">Tarikh Surat Keluar</label>
+                            <input id="form-date-sent" required type="text" placeholder="Cth: 10/03/2026" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" />
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="text-xs font-bold text-slate-500 uppercase">Daripada Sektor</label>
+                            <input id="form-origin-sector" required type="text" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" />
+                        </div>
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="text-xs font-bold text-slate-500 uppercase">Perkara</label>
+                        <input id="form-title" required type="text" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" />
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="text-xs font-bold text-slate-500 uppercase">No. Rujukan</label>
+                        <input id="form-ref" required type="text" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" />
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="space-y-1.5">
+                            <label class="text-xs font-bold text-slate-500 uppercase">Kepada</label>
+                            <input id="form-recipient" required type="text" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" />
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="text-xs font-bold text-slate-500 uppercase">Status</label>
+                            <select id="form-status" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none">
+                                <option value="Selesai">Selesai</option>
+                                <option value="Draft">Draf</option>
+                                <option value="Sent">Dihantar</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="text-xs font-bold text-slate-500 uppercase">Kaedah Penghantaran</label>
+                        <input id="form-method" type="text" placeholder="Cth: Peti Surat Sekolah" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" />
                     </div>
                 `;
             }
@@ -549,24 +677,32 @@
                     sector: document.getElementById('form-sector').value,
                     officer: document.getElementById('form-officer').value,
                     status: document.getElementById('form-status').value,
-                    ppdNotes: document.getElementById('form-ppd-notes').value,
                     registryNo: document.getElementById('form-registry').value
                 };
                 state.data.incomingSchool.unshift(newItem);
-            } else {
-                const type = tab === 'surat-masuk-jabatan' ? 'incomingExternal' : 'outgoing';
-                const prefix = tab === 'surat-masuk-jabatan' ? 'SMJ' : 'SK';
+            } else if (tab === 'surat-masuk-jabatan') {
                 newItem = {
-                    id: prefix + '-' + Math.floor(100 + Math.random() * 900),
+                    id: 'SMJ-' + Math.floor(100 + Math.random() * 900),
+                    dateReceived: document.getElementById('form-date-received').value,
+                    sender: document.getElementById('form-origin').value,
                     title: document.getElementById('form-title').value,
-                    date: new Date().toISOString().split('T')[0],
+                    refNumber: document.getElementById('form-ref').value,
                     status: document.getElementById('form-status').value,
-                    description: document.getElementById('form-description').value || ''
+                    registryNo: document.getElementById('form-registry').value
                 };
-                if (prefix === 'SK') newItem.recipient = document.getElementById('form-origin').value;
-                else newItem.sender = document.getElementById('form-origin').value;
-                
-                state.data[type].unshift(newItem);
+                state.data.incomingExternal.unshift(newItem);
+            } else {
+                newItem = {
+                    id: 'SK-' + Math.floor(100 + Math.random() * 900),
+                    dateSent: document.getElementById('form-date-sent').value,
+                    fromSector: document.getElementById('form-origin-sector').value,
+                    title: document.getElementById('form-title').value,
+                    refNumber: document.getElementById('form-ref').value,
+                    recipient: document.getElementById('form-recipient').value,
+                    status: document.getElementById('form-status').value,
+                    method: document.getElementById('form-method').value
+                };
+                state.data.outgoing.unshift(newItem);
             }
 
             closeModal();
@@ -583,18 +719,18 @@
             container.innerHTML = `
                 <div class="bg-white rounded-xl border border-slate-200 p-8 shadow-sm max-w-2xl mx-auto mt-10">
                     <h2 class="text-xl font-bold mb-6">Profil Sekolah</h2>
-                    <div class="space-y-6">
+                    <div class="space-y-6 text-sm">
                         <div class="grid grid-cols-2 gap-4">
                             <div class="space-y-2">
-                                <label class="text-xs font-bold text-slate-400 uppercase">Nama Sekolah</label>
+                                <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Nama Sekolah</label>
                                 <input type="text" value="SMK Cyberjaya" class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg outline-none" />
                             </div>
                             <div class="space-y-2">
-                                <label class="text-xs font-bold text-slate-400 uppercase">Kod Sekolah</label>
+                                <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Kod Sekolah</label>
                                 <input type="text" value="BEA1234" class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg outline-none" />
                             </div>
                         </div>
-                        <button class="w-full py-3 bg-blue-600 text-white rounded-lg font-bold">Simpan Profil</button>
+                        <button class="w-full py-3 bg-blue-600 text-white rounded-lg font-bold shadow-lg shadow-blue-100">Simpan Profil</button>
                     </div>
                 </div>`;
         }
@@ -606,7 +742,7 @@
                         <i data-lucide="${icon.toLowerCase()}" class="w-10 h-10"></i>
                     </div>
                     <h2 class="text-lg font-bold text-slate-900">${title}</h2>
-                    <p class="text-sm text-slate-500 text-center max-w-xs mt-1">${desc}</p>
+                    <p class="text-sm text-slate-500 text-center max-w-xs mt-1 leading-relaxed">${desc}</p>
                 </div>`;
         }
 
