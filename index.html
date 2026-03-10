@@ -1,942 +1,635 @@
 <!doctype html>
-<html lang="ms">
+<html lang="id" class="h-full">
  <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>eKenderaan - Sistem Pengurusan Kenderaan</title>
+  <title>Sistem eSurat</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="/_sdk/element_sdk.js"></script>
   <script src="/_sdk/data_sdk.js"></script>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
   <style>
-        body {
-            box-sizing: border-box;
-        }
-        
-        .fade-in {
-            animation: fadeIn 0.3s ease-in;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .chart-container {
-            position: relative;
-            width: 100%;
-            height: 300px;
-        }
-        
-        @media (min-width: 768px) {
-            .chart-container {
-                height: 400px;
-            }
-        }
-        
-        .status-badge {
-            display: inline-flex;
-            align-items: center;
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            font-weight: 500;
-        }
-        
-        .status-active { background-color: #d1fae5; color: #065f46; }
-        .status-inactive { background-color: #fee2e2; color: #991b1b; }
-        .status-pending { background-color: #fef3c7; color: #92400e; }
-        .status-approved { background-color: #d1fae5; color: #065f46; }
-        .status-rejected { background-color: #fee2e2; color: #991b1b; }
-        .status-in-use { background-color: #dbeafe; color: #1e40af; }
-        
-        .spinner {
-            border: 2px solid #f3f3f3;
-            border-top: 2px solid #3498db;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        @media print {
-            .no-print { display: none !important; }
-        }
-    </style>
-  <style>@view-transition { navigation: auto; }</style>
-  <script src="/_sdk/element_sdk.js" type="text/javascript"></script>
+    * { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+    }
+    .sidebar-item:hover { transform: translateX(4px); }
+    .stat-card:hover { transform: translateY(-2px); }
+    .table-row:hover { background: rgba(59, 130, 246, 0.05); }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
+    .priority-high { border-left: 4px solid #ef4444; }
+    .priority-medium { border-left: 4px solid #f59e0b; }
+    .priority-low { border-left: 4px solid #22c55e; }
+  </style>
+  <style>body { box-sizing: border-box; }</style>
  </head>
- <body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-full"><!-- Login Section -->
-  <div id="login-section" class="min-h-full flex items-center justify-center px-4 py-8">
-   <div class="bg-white rounded-xl shadow-lg p-8 w-full max-w-md fade-in">
-    <div class="text-center mb-8">
-     <h1 class="text-3xl font-bold text-gray-800 mb-2">🚗 eKenderaan</h1>
-     <p class="text-gray-600">Sistem Pengurusan Kenderaan</p>
-     <p class="text-gray-600 text-sm">Pejabat Pendidikan Daerah Limbang</p>
-    </div>
-    <div class="flex mb-6 bg-gray-100 rounded-lg p-1"><button id="login-tab" class="flex-1 py-2 px-4 rounded-md font-medium transition-all bg-blue-600 text-white"> Log Masuk </button> <button id="register-tab" class="flex-1 py-2 px-4 rounded-md font-medium transition-all text-gray-600 hover:text-blue-600"> Daftar Akaun </button>
-    </div>
-    <div id="login-form-container">
-     <form id="login-form" class="space-y-6">
-      <div><label for="username" class="block text-sm font-medium text-gray-700 mb-2">Email Rasmi</label> <input type="email" id="username" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Masukkan email rasmi" required>
+ <body class="h-full">
+  <div id="app-wrapper" class="h-full w-full overflow-auto" style="background: linear-gradient(135deg, #1e3a5f 0%, #0f172a 50%, #1e1b4b 100%);"><!-- Main Container -->
+   <div class="flex h-full min-h-screen"><!-- Sidebar -->
+    <aside class="w-64 bg-slate-900/80 backdrop-blur-xl border-r border-slate-700/50 flex flex-col"><!-- Logo -->
+     <div class="p-6 border-b border-slate-700/50">
+      <div class="flex items-center gap-3">
+       <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
+        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+        </svg>
+       </div>
+       <div>
+        <h1 id="sidebar-title" class="text-white font-bold text-lg">eSurat</h1>
+        <p id="sidebar-org" class="text-slate-400 text-xs">Manajemen Surat Digital</p>
+       </div>
       </div>
-      <div><label for="password" class="block text-sm font-medium text-gray-700 mb-2">Kata Laluan</label> <input type="password" id="password" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Masukkan kata laluan" required>
-      </div><button type="submit" id="login-btn" class="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-blue-700 transition-colors"> 🔐 Log Masuk </button>
+     </div><!-- Navigation -->
+     <nav class="flex-1 p-4 space-y-2"><button onclick="showView('dashboard')" class="sidebar-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-white bg-blue-600/20 border border-blue-500/30 transition-all duration-200">
+       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+       </svg><span class="font-medium">Dashboard</span> </button> <button onclick="showView('surat-masuk')" class="sidebar-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:text-white hover:bg-slate-700/50 transition-all duration-200">
+       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+       </svg><span class="font-medium">Surat Masuk</span> </button> <button onclick="showView('surat-keluar')" class="sidebar-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:text-white hover:bg-slate-700/50 transition-all duration-200">
+       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+       </svg><span class="font-medium">Surat Keluar</span> </button> <button onclick="showView('disposisi')" class="sidebar-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:text-white hover:bg-slate-700/50 transition-all duration-200">
+       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+       </svg><span class="font-medium">Disposisi</span> </button>
+     </nav><!-- User Info -->
+     <div class="p-4 border-t border-slate-700/50">
+      <div class="flex items-center gap-3 px-3 py-2">
+       <div class="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white font-bold">
+        A
+       </div>
+       <div class="flex-1 min-w-0">
+        <p class="text-white font-medium text-sm truncate">Administrator</p>
+        <p class="text-slate-400 text-xs">Admin Sistem</p>
+       </div>
+      </div>
+     </div>
+    </aside><!-- Main Content -->
+    <main class="flex-1 overflow-auto"><!-- Dashboard View -->
+     <div id="view-dashboard" class="p-8 animate-fade-in"><!-- Header -->
+      <div class="mb-8">
+       <h2 id="main-title" class="text-3xl font-bold text-white mb-2">Dashboard eSurat</h2>
+       <p class="text-slate-400">Selamat datang di Sistem Manajemen Surat Digital</p>
+      </div><!-- Stats Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+       <div class="stat-card glass-card rounded-2xl p-6 transition-all duration-300 cursor-pointer" onclick="showView('surat-masuk')">
+        <div class="flex items-center justify-between mb-4">
+         <div class="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center">
+          <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+          </svg>
+         </div><span class="text-xs font-medium text-blue-600 bg-blue-100 px-2 py-1 rounded-full">Masuk</span>
+        </div>
+        <h3 id="stat-masuk" class="text-3xl font-bold text-slate-800 mb-1">0</h3>
+        <p class="text-slate-500 text-sm">Total Surat Masuk</p>
+       </div>
+       <div class="stat-card glass-card rounded-2xl p-6 transition-all duration-300 cursor-pointer" onclick="showView('surat-keluar')">
+        <div class="flex items-center justify-between mb-4">
+         <div class="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center">
+          <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+          </svg>
+         </div><span class="text-xs font-medium text-emerald-600 bg-emerald-100 px-2 py-1 rounded-full">Keluar</span>
+        </div>
+        <h3 id="stat-keluar" class="text-3xl font-bold text-slate-800 mb-1">0</h3>
+        <p class="text-slate-500 text-sm">Total Surat Keluar</p>
+       </div>
+       <div class="stat-card glass-card rounded-2xl p-6 transition-all duration-300">
+        <div class="flex items-center justify-between mb-4">
+         <div class="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center">
+          <svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+         </div><span class="text-xs font-medium text-amber-600 bg-amber-100 px-2 py-1 rounded-full">Proses</span>
+        </div>
+        <h3 id="stat-proses" class="text-3xl font-bold text-slate-800 mb-1">0</h3>
+        <p class="text-slate-500 text-sm">Sedang Diproses</p>
+       </div>
+       <div class="stat-card glass-card rounded-2xl p-6 transition-all duration-300">
+        <div class="flex items-center justify-between mb-4">
+         <div class="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center">
+          <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+         </div><span class="text-xs font-medium text-purple-600 bg-purple-100 px-2 py-1 rounded-full">Selesai</span>
+        </div>
+        <h3 id="stat-selesai" class="text-3xl font-bold text-slate-800 mb-1">0</h3>
+        <p class="text-slate-500 text-sm">Surat Selesai</p>
+       </div>
+      </div><!-- Recent Letters -->
+      <div class="glass-card rounded-2xl p-6">
+       <div class="flex items-center justify-between mb-6">
+        <h3 class="text-xl font-bold text-slate-800">Surat Terbaru</h3><button onclick="openModal()" class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-medium transition-colors">
+         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+         </svg> Tambah Surat </button>
+       </div>
+       <div id="recent-letters" class="space-y-3">
+        <div class="text-center py-12 text-slate-400">
+         <svg class="w-16 h-16 mx-auto mb-4 opacity-50" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+         </svg>
+         <p class="font-medium">Belum ada surat</p>
+         <p class="text-sm">Klik tombol "Tambah Surat" untuk membuat surat baru</p>
+        </div>
+       </div>
+      </div>
+     </div><!-- Surat Masuk View -->
+     <div id="view-surat-masuk" class="p-8 hidden">
+      <div class="flex items-center justify-between mb-8">
+       <div>
+        <h2 class="text-3xl font-bold text-white mb-2">Surat Masuk</h2>
+        <p class="text-slate-400">Daftar semua surat masuk yang diterima</p>
+       </div><button onclick="openModal('masuk')" class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-medium transition-colors">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+        </svg> Tambah Surat Masuk </button>
+      </div>
+      <div class="glass-card rounded-2xl overflow-hidden">
+       <div id="list-surat-masuk" class="divide-y divide-slate-100">
+        <div class="text-center py-12 text-slate-400">
+         <p class="font-medium">Belum ada surat masuk</p>
+        </div>
+       </div>
+      </div>
+     </div><!-- Surat Keluar View -->
+     <div id="view-surat-keluar" class="p-8 hidden">
+      <div class="flex items-center justify-between mb-8">
+       <div>
+        <h2 class="text-3xl font-bold text-white mb-2">Surat Keluar</h2>
+        <p class="text-slate-400">Daftar semua surat keluar yang dikirim</p>
+       </div><button onclick="openModal('keluar')" class="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl font-medium transition-colors">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+        </svg> Tambah Surat Keluar </button>
+      </div>
+      <div class="glass-card rounded-2xl overflow-hidden">
+       <div id="list-surat-keluar" class="divide-y divide-slate-100">
+        <div class="text-center py-12 text-slate-400">
+         <p class="font-medium">Belum ada surat keluar</p>
+        </div>
+       </div>
+      </div>
+     </div><!-- Disposisi View -->
+     <div id="view-disposisi" class="p-8 hidden">
+      <div class="mb-8">
+       <h2 class="text-3xl font-bold text-white mb-2">Disposisi Surat</h2>
+       <p class="text-slate-400">Kelola disposisi dan tindak lanjut surat</p>
+      </div>
+      <div class="glass-card rounded-2xl overflow-hidden">
+       <div id="list-disposisi" class="divide-y divide-slate-100">
+        <div class="text-center py-12 text-slate-400">
+         <p class="font-medium">Belum ada disposisi</p>
+        </div>
+       </div>
+      </div>
+     </div>
+    </main>
+   </div><!-- Modal -->
+   <div id="modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-2xl w-full max-w-lg max-h-[90%] overflow-auto animate-fade-in">
+     <div class="p-6 border-b border-slate-100">
+      <div class="flex items-center justify-between">
+       <h3 id="modal-title" class="text-xl font-bold text-slate-800">Tambah Surat Baru</h3><button onclick="closeModal()" class="w-10 h-10 rounded-xl hover:bg-slate-100 flex items-center justify-center transition-colors">
+        <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg></button>
+      </div>
+     </div>
+     <form id="surat-form" class="p-6 space-y-4"><input type="hidden" id="surat-id" value="">
+      <div class="grid grid-cols-2 gap-4">
+       <div><label class="block text-sm font-medium text-slate-700 mb-2">Jenis Surat</label> <select id="jenis-surat" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"> <option value="masuk">Surat Masuk</option> <option value="keluar">Surat Keluar</option> </select>
+       </div>
+       <div><label class="block text-sm font-medium text-slate-700 mb-2">Nomor Surat</label> <input type="text" id="nomor-surat" required placeholder="001/ABC/2024" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all">
+       </div>
+      </div>
+      <div><label class="block text-sm font-medium text-slate-700 mb-2">Perihal</label> <input type="text" id="perihal" required placeholder="Perihal surat..." class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all">
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+       <div><label class="block text-sm font-medium text-slate-700 mb-2">Pengirim</label> <input type="text" id="pengirim" required placeholder="Nama pengirim" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all">
+       </div>
+       <div><label class="block text-sm font-medium text-slate-700 mb-2">Penerima</label> <input type="text" id="penerima" required placeholder="Nama penerima" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all">
+       </div>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+       <div><label class="block text-sm font-medium text-slate-700 mb-2">Tanggal</label> <input type="date" id="tanggal" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all">
+       </div>
+       <div><label class="block text-sm font-medium text-slate-700 mb-2">Prioritas</label> <select id="prioritas" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"> <option value="rendah">Rendah</option> <option value="sedang" selected>Sedang</option> <option value="tinggi">Tinggi</option> </select>
+       </div>
+      </div>
+      <div><label class="block text-sm font-medium text-slate-700 mb-2">Status</label> <select id="status" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"> <option value="baru">Baru</option> <option value="diproses">Sedang Diproses</option> <option value="selesai">Selesai</option> </select>
+      </div>
+      <div><label class="block text-sm font-medium text-slate-700 mb-2">Catatan</label> <textarea id="catatan" rows="3" placeholder="Catatan tambahan..." class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all resize-none"></textarea>
+      </div>
+      <div class="flex gap-3 pt-4"><button type="button" onclick="closeModal()" class="flex-1 px-4 py-3 rounded-xl border border-slate-200 text-slate-600 font-medium hover:bg-slate-50 transition-colors"> Batal </button> <button type="submit" id="submit-btn" class="flex-1 px-4 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-medium transition-colors"> Simpan Surat </button>
+      </div>
      </form>
-     <div class="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-      <p class="text-sm text-blue-800 font-medium mb-2">ℹ️ Maklumat Penting</p>
-      <p class="text-xs text-blue-700">Sistem ini menggunakan Canva Sheet untuk menyimpan data. Semua tempahan, pengguna, kenderaan dan pemandu akan disimpan secara automatik.</p>
-      <p class="text-xs text-blue-700 mt-2"><strong>Admin:</strong> Daftar dengan nama "Shafik Azizi" untuk akses penuh.</p>
+    </div>
+   </div><!-- Delete Confirmation Modal -->
+   <div id="delete-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-2xl w-full max-w-sm animate-fade-in p-6">
+     <div class="text-center mb-6">
+      <div class="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
+       <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+       </svg>
+      </div>
+      <h3 class="text-xl font-bold text-slate-800 mb-2">Hapus Surat?</h3>
+      <p class="text-slate-500">Surat yang dihapus tidak dapat dikembalikan.</p>
+     </div>
+     <div class="flex gap-3"><button onclick="closeDeleteModal()" class="flex-1 px-4 py-3 rounded-xl border border-slate-200 text-slate-600 font-medium hover:bg-slate-50 transition-colors"> Batal </button> <button id="confirm-delete-btn" class="flex-1 px-4 py-3 rounded-xl bg-red-600 hover:bg-red-700 text-white font-medium transition-colors"> Hapus </button>
      </div>
     </div>
-    <div id="register-form-container" class="hidden">
-     <form id="register-form" class="space-y-6">
-      <div><label for="reg-fullname" class="block text-sm font-medium text-gray-700 mb-2">Nama Penuh</label> <input type="text" id="reg-fullname" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Masukkan nama penuh" required>
-      </div>
-      <div><label for="reg-email" class="block text-sm font-medium text-gray-700 mb-2">Email Rasmi</label> <input type="email" id="reg-email" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="contoh@moe.gov.my" required>
-      </div>
-      <div><label for="reg-sector" class="block text-sm font-medium text-gray-700 mb-2">Sektor/Unit</label> <select id="reg-sector" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" required> <option value="">Pilih sektor/unit...</option> <option value="Sektor Perancangan">Sektor Perancangan</option> <option value="Sektor Pembelajaran">Sektor Pembelajaran</option> <option value="Sektor Pengurusan Sekolah">Sektor Pengurusan Sekolah</option> <option value="Sektor Pengurusan">Sektor Pengurusan</option> <option value="Sektor Pentaksiran dan Peperiksaan">Sektor Pentaksiran dan Peperiksaan</option> <option value="PTIS">PTIS</option> </select>
-      </div>
-      <div><label for="reg-password" class="block text-sm font-medium text-gray-700 mb-2">Kata Laluan</label> <input type="password" id="reg-password" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Cipta kata laluan" required>
-      </div>
-      <div><label for="reg-confirm-password" class="block text-sm font-medium text-gray-700 mb-2">Sahkan Kata Laluan</label> <input type="password" id="reg-confirm-password" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Sahkan kata laluan" required>
-      </div><button type="submit" id="register-btn" class="w-full bg-green-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-green-700 transition-colors"> ✅ Daftar Akaun </button>
-     </form>
-    </div>
-    <div id="login-error" class="hidden mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm"></div>
-    <div id="register-success" class="hidden mt-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded-lg text-sm">
-     ✅ Akaun berjaya didaftar! Sila log masuk.
-    </div>
-    <div id="register-error" class="hidden mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm"></div>
-   </div>
-  </div><!-- Main Application -->
-  <div id="main-app" class="hidden px-4 py-8">
-   <div class="container mx-auto max-w-7xl"><!-- Header -->
-    <header class="mb-8">
-     <div class="flex flex-col lg:flex-row justify-between items-center mb-4 gap-4">
-      <div class="text-left">
-       <p class="text-sm text-gray-600">Selamat datang,</p>
-       <p id="current-user-display" class="font-semibold text-gray-800"></p>
-       <p id="current-role-display" class="text-xs text-blue-600"></p>
-      </div>
-      <div class="text-center">
-       <h1 class="text-4xl font-bold text-gray-800 mb-2">🚗 eKenderaan</h1>
-       <p class="text-gray-600">Sistem Pengurusan Kenderaan</p>
-       <p class="text-gray-600">Pejabat Pendidikan Daerah Limbang</p>
-      </div><button id="logout-btn" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm no-print"> 🚪 Log Keluar </button>
-     </div>
-    </header><!-- Navigation -->
-    <nav class="mb-8 no-print">
-     <div class="bg-white rounded-lg shadow-md p-2">
-      <div class="flex flex-wrap gap-2 justify-center"><button id="tab-booking" class="px-4 py-2 rounded-md font-medium transition-all bg-blue-600 text-white">Tempahan</button> <button id="tab-tracking" class="px-4 py-2 rounded-md font-medium transition-all text-gray-600 hover:text-blue-600">Tracking</button> <button id="tab-schedule" class="px-4 py-2 rounded-md font-medium transition-all text-gray-600 hover:text-blue-600">Jadual</button> <button id="tab-history" class="px-4 py-2 rounded-md font-medium transition-all text-gray-600 hover:text-blue-600">Sejarah</button> <button id="tab-approval" class="px-4 py-2 rounded-md font-medium transition-all text-gray-600 hover:text-blue-600">Kelulusan</button> <button id="tab-users" class="px-4 py-2 rounded-md font-medium transition-all text-gray-600 hover:text-blue-600">Pengguna</button> <button id="tab-drivers" class="px-4 py-2 rounded-md font-medium transition-all text-gray-600 hover:text-blue-600">Pemandu</button> <button id="tab-vehicles" class="px-4 py-2 rounded-md font-medium transition-all text-gray-600 hover:text-blue-600">Kenderaan</button> <button id="tab-analytics" class="px-4 py-2 rounded-md font-medium transition-all text-gray-600 hover:text-blue-600">Analitik</button>
-      </div>
-     </div>
-    </nav><!-- Booking Section -->
-    <div id="booking-section" class="max-w-4xl mx-auto">
-     <div class="bg-white rounded-xl shadow-lg p-8 fade-in">
-      <h2 class="text-2xl font-bold text-gray-800 mb-6">📝 Borang Tempahan Kenderaan</h2>
-      <form id="booking-form" class="space-y-6">
-       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div><label for="employee-name" class="block text-sm font-medium text-gray-700 mb-2">Nama Pegawai</label> <input type="text" id="employee-name" class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50" readonly>
-        </div>
-        <div><label for="employee-sector" class="block text-sm font-medium text-gray-700 mb-2">Sektor/Unit</label> <input type="text" id="employee-sector" class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50" readonly>
-        </div>
-       </div>
-       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div><label for="start-date" class="block text-sm font-medium text-gray-700 mb-2">Tarikh Mula</label> <input type="date" id="start-date" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" required>
-        </div>
-        <div><label for="start-time" class="block text-sm font-medium text-gray-700 mb-2">Masa Mula</label> <input type="time" id="start-time" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" required>
-        </div>
-       </div>
-       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div><label for="end-date" class="block text-sm font-medium text-gray-700 mb-2">Tarikh Tamat</label> <input type="date" id="end-date" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" required>
-        </div>
-        <div><label for="end-time" class="block text-sm font-medium text-gray-700 mb-2">Masa Tamat</label> <input type="time" id="end-time" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" required>
-        </div>
-       </div>
-       <div><label for="purpose" class="block text-sm font-medium text-gray-700 mb-2">Tujuan Penggunaan</label> <textarea id="purpose" rows="3" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="Nyatakan tujuan penggunaan..." required></textarea>
-       </div><button type="submit" id="submit-booking-btn" class="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-blue-700 transition-colors"> 🚗 Hantar Tempahan </button>
-      </form>
-     </div>
-    </div><!-- Tracking Section -->
-    <div id="tracking-section" class="hidden">
-     <div class="bg-white rounded-xl shadow-lg p-8 fade-in">
-      <h2 class="text-2xl font-bold text-gray-800 mb-6">📍 Status Kenderaan</h2>
-      <div id="car-status-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"></div>
-     </div>
-    </div><!-- Schedule Section -->
-    <div id="schedule-section" class="hidden">
-     <div class="bg-white rounded-xl shadow-lg p-8 fade-in">
-      <h2 class="text-2xl font-bold text-gray-800 mb-6">📅 Jadual Pinjaman</h2>
-      <div id="schedule-content" class="overflow-x-auto">
-       <p class="text-gray-500 text-center py-8">Tiada jadual pada masa ini</p>
-      </div>
-     </div>
-    </div><!-- History Section -->
-    <div id="history-section" class="hidden">
-     <div class="bg-white rounded-xl shadow-lg p-8 fade-in">
-      <h2 class="text-2xl font-bold text-gray-800 mb-6">📋 Sejarah Pinjaman</h2>
-      <div class="overflow-x-auto">
-       <table class="w-full">
-        <thead>
-         <tr class="bg-gray-50">
-          <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Nama</th>
-          <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Kenderaan</th>
-          <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Tarikh</th>
-          <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Status</th>
-          <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Tujuan</th>
-         </tr>
-        </thead>
-        <tbody id="history-table-body"></tbody>
-       </table>
-      </div>
-     </div>
-    </div><!-- Approval Section -->
-    <div id="approval-section" class="hidden">
-     <div class="bg-white rounded-xl shadow-lg p-8 fade-in">
-      <h2 class="text-2xl font-bold text-gray-800 mb-6">✅ Kelulusan Tempahan</h2>
-      <div class="overflow-x-auto">
-       <table class="w-full">
-        <thead>
-         <tr class="bg-yellow-50">
-          <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Nama</th>
-          <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Tarikh</th>
-          <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Tujuan</th>
-          <th class="px-4 py-3 text-left text-sm font-medium text-gray-700 no-print">Pilih Kenderaan</th>
-          <th class="px-4 py-3 text-left text-sm font-medium text-gray-700 no-print">Pilih Pemandu</th>
-          <th class="px-4 py-3 text-left text-sm font-medium text-gray-700 no-print">Tindakan</th>
-         </tr>
-        </thead>
-        <tbody id="approval-table-body"></tbody>
-       </table>
-      </div>
-     </div>
-    </div><!-- Users Section -->
-    <div id="users-section" class="hidden">
-     <div class="bg-white rounded-xl shadow-lg p-8 fade-in">
-      <h2 class="text-2xl font-bold text-gray-800 mb-6">👥 Pengurusan Pengguna</h2>
-      <div class="overflow-x-auto">
-       <table class="w-full">
-        <thead>
-         <tr class="bg-gray-50">
-          <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Nama</th>
-          <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Email</th>
-          <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Sektor</th>
-          <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Peranan</th>
-          <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Status</th>
-         </tr>
-        </thead>
-        <tbody id="users-table-body"></tbody>
-       </table>
-      </div>
-     </div>
-    </div><!-- Drivers Section -->
-    <div id="drivers-section" class="hidden">
-     <div class="bg-white rounded-xl shadow-lg p-8 fade-in">
-      <h2 class="text-2xl font-bold text-gray-800 mb-6">🚗 Pengurusan Pemandu</h2>
-      <div class="bg-gray-50 rounded-lg p-6 mb-6 no-print">
-       <h3 class="text-lg font-semibold text-gray-800 mb-4">➕ Tambah Pemandu Baru</h3>
-       <form id="add-driver-form" class="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div><label for="driver-name" class="block text-sm font-medium text-gray-700 mb-2">Nama Pemandu</label> <input type="text" id="driver-name" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" required>
-        </div>
-        <div><label for="driver-ic" class="block text-sm font-medium text-gray-700 mb-2">No. Kad Pengenalan</label> <input type="text" id="driver-ic" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" required>
-        </div>
-        <div><label for="driver-license" class="block text-sm font-medium text-gray-700 mb-2">No. Lesen</label> <input type="text" id="driver-license" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" required>
-        </div>
-        <div class="flex items-end"><button type="submit" id="add-driver-btn" class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors"> ➕ Tambah </button>
-        </div>
-       </form>
-      </div>
-      <div class="overflow-x-auto">
-       <table class="w-full">
-        <thead>
-         <tr class="bg-gray-50">
-          <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Nama</th>
-          <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">No. K/P</th>
-          <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">No. Lesen</th>
-          <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Status</th>
-         </tr>
-        </thead>
-        <tbody id="drivers-table-body"></tbody>
-       </table>
-      </div>
-     </div>
-    </div><!-- Vehicles Section -->
-    <div id="vehicles-section" class="hidden">
-     <div class="bg-white rounded-xl shadow-lg p-8 fade-in">
-      <h2 class="text-2xl font-bold text-gray-800 mb-6">🚙 Pengurusan Kenderaan</h2>
-      <div class="bg-gray-50 rounded-lg p-6 mb-6 no-print">
-       <h3 class="text-lg font-semibold text-gray-800 mb-4">➕ Tambah Kenderaan Baru</h3>
-       <form id="add-vehicle-form" class="grid grid-cols-1 md:grid-cols-5 gap-4">
-        <div><label for="vehicle-brand" class="block text-sm font-medium text-gray-700 mb-2">Jenama</label> <select id="vehicle-brand" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" required> <option value="">Pilih...</option> <option value="Toyota">Toyota</option> <option value="Honda">Honda</option> <option value="Perodua">Perodua</option> <option value="Proton">Proton</option> <option value="Nissan">Nissan</option> </select>
-        </div>
-        <div><label for="vehicle-model" class="block text-sm font-medium text-gray-700 mb-2">Model</label> <input type="text" id="vehicle-model" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" required>
-        </div>
-        <div><label for="vehicle-plate" class="block text-sm font-medium text-gray-700 mb-2">No. Plat</label> <input type="text" id="vehicle-plate" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" required>
-        </div>
-        <div><label for="vehicle-year" class="block text-sm font-medium text-gray-700 mb-2">Tahun</label> <select id="vehicle-year" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" required> <option value="">Pilih...</option> <option value="2024">2024</option> <option value="2023">2023</option> <option value="2022">2022</option> <option value="2021">2021</option> <option value="2020">2020</option> </select>
-        </div>
-        <div class="flex items-end"><button type="submit" id="add-vehicle-btn" class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors"> ➕ Tambah </button>
-        </div>
-       </form>
-      </div>
-      <div class="overflow-x-auto">
-       <table class="w-full">
-        <thead>
-         <tr class="bg-gray-50">
-          <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Kenderaan</th>
-          <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">No. Plat</th>
-          <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Tahun</th>
-          <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Status</th>
-         </tr>
-        </thead>
-        <tbody id="vehicles-table-body"></tbody>
-       </table>
-      </div>
-     </div>
-    </div><!-- Analytics Section -->
-    <div id="analytics-section" class="hidden">
-     <div class="bg-white rounded-xl shadow-lg p-8 fade-in">
-      <h2 class="text-2xl font-bold text-gray-800 mb-6">📊 Analitik Penggunaan</h2>
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-       <div class="bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg p-6 text-white">
-        <p class="text-blue-100 text-sm">Jumlah Tempahan</p>
-        <p id="total-bookings" class="text-2xl font-bold">0</p>
-       </div>
-       <div class="bg-gradient-to-r from-green-500 to-green-600 rounded-lg p-6 text-white">
-        <p class="text-green-100 text-sm">Selesai</p>
-        <p id="completed-bookings" class="text-2xl font-bold">0</p>
-       </div>
-       <div class="bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg p-6 text-white">
-        <p class="text-purple-100 text-sm">Paling Popular</p>
-        <p id="most-popular" class="text-lg font-bold">-</p>
-       </div>
-       <div class="bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg p-6 text-white">
-        <p class="text-orange-100 text-sm">Menunggu</p>
-        <p id="pending-bookings" class="text-2xl font-bold">0</p>
-       </div>
-      </div>
-      <div class="chart-container mb-8">
-       <canvas id="usage-chart"></canvas>
-      </div>
-     </div>
-    </div><!-- Success Message -->
-    <div id="success-message" class="hidden fixed top-4 right-4 bg-green-500 text-white px-6 py-4 rounded-lg shadow-lg z-50">
-     ✅ Operasi berjaya!
-    </div><!-- Loading Overlay -->
-    <div id="loading-overlay" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-     <div class="bg-white rounded-lg p-6 flex items-center space-x-3">
-      <div class="spinner"></div><span class="text-gray-700">Memproses...</span>
-     </div>
+   </div><!-- Toast -->
+   <div id="toast" class="fixed bottom-6 right-6 transform translate-y-20 opacity-0 transition-all duration-300 z-50">
+    <div class="bg-slate-800 text-white px-6 py-4 rounded-xl shadow-lg flex items-center gap-3">
+     <svg id="toast-icon" class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+     </svg><span id="toast-message">Berhasil disimpan!</span>
     </div>
    </div>
   </div>
   <script>
-        let currentUser = null;
-        let allData = [];
-        let usageChart = null;
+    // Application State
+    let suratData = [];
+    let editingId = null;
+    let deleteId = null;
+    let currentRecordCount = 0;
 
-        // Data Handler
-        const dataHandler = {
-            onDataChanged(data) {
-                allData = data;
-                updateAllViews();
+    const defaultConfig = {
+      app_title: 'Dashboard eSurat',
+      organization_name: 'Manajemen Surat Digital',
+      background_color: '#1e3a5f',
+      surface_color: '#ffffff',
+      text_color: '#1e293b',
+      primary_action_color: '#2563eb',
+      secondary_action_color: '#059669'
+    };
+
+    // Element SDK Implementation
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange: async (config) => {
+          const title = config.app_title || defaultConfig.app_title;
+          const org = config.organization_name || defaultConfig.organization_name;
+          const bgColor = config.background_color || defaultConfig.background_color;
+          const surfaceColor = config.surface_color || defaultConfig.surface_color;
+          const textColor = config.text_color || defaultConfig.text_color;
+          const primaryColor = config.primary_action_color || defaultConfig.primary_action_color;
+          const secondaryColor = config.secondary_action_color || defaultConfig.secondary_action_color;
+
+          document.getElementById('main-title').textContent = title;
+          document.getElementById('sidebar-org').textContent = org;
+          
+          // Apply colors
+          document.getElementById('app-wrapper').style.background = `linear-gradient(135deg, ${bgColor} 0%, #0f172a 50%, #1e1b4b 100%)`;
+          document.querySelectorAll('.glass-card').forEach(el => {
+            el.style.backgroundColor = surfaceColor;
+          });
+        },
+        mapToCapabilities: (config) => ({
+          recolorables: [
+            {
+              get: () => config.background_color || defaultConfig.background_color,
+              set: (v) => { config.background_color = v; window.elementSdk.setConfig({ background_color: v }); }
+            },
+            {
+              get: () => config.surface_color || defaultConfig.surface_color,
+              set: (v) => { config.surface_color = v; window.elementSdk.setConfig({ surface_color: v }); }
+            },
+            {
+              get: () => config.text_color || defaultConfig.text_color,
+              set: (v) => { config.text_color = v; window.elementSdk.setConfig({ text_color: v }); }
+            },
+            {
+              get: () => config.primary_action_color || defaultConfig.primary_action_color,
+              set: (v) => { config.primary_action_color = v; window.elementSdk.setConfig({ primary_action_color: v }); }
+            },
+            {
+              get: () => config.secondary_action_color || defaultConfig.secondary_action_color,
+              set: (v) => { config.secondary_action_color = v; window.elementSdk.setConfig({ secondary_action_color: v }); }
             }
-        };
+          ],
+          borderables: [],
+          fontEditable: undefined,
+          fontSizeable: undefined
+        }),
+        mapToEditPanelValues: (config) => new Map([
+          ['app_title', config.app_title || defaultConfig.app_title],
+          ['organization_name', config.organization_name || defaultConfig.organization_name]
+        ])
+      });
+    }
 
-        // Initialize Data SDK
-        async function initializeApp() {
-            const result = await window.dataSdk.init(dataHandler);
-            if (!result.isOk) {
-                console.error('Failed to initialize Data SDK');
-            }
+    // Data SDK Implementation
+    const dataHandler = {
+      onDataChanged(data) {
+        suratData = data;
+        currentRecordCount = data.length;
+        updateUI();
+      }
+    };
+
+    // Initialize Data SDK
+    async function initDataSDK() {
+      if (window.dataSdk) {
+        const result = await window.dataSdk.init(dataHandler);
+        if (!result.isOk) {
+          showToast('Gagal memuat data', 'error');
+        }
+      }
+    }
+    initDataSDK();
+
+    // UI Functions
+    function showView(view) {
+      document.querySelectorAll('[id^="view-"]').forEach(el => el.classList.add('hidden'));
+      document.getElementById(`view-${view}`).classList.remove('hidden');
+      
+      // Update sidebar active state
+      document.querySelectorAll('.sidebar-item').forEach(el => {
+        el.classList.remove('bg-blue-600/20', 'border', 'border-blue-500/30', 'text-white');
+        el.classList.add('text-slate-300');
+      });
+    }
+
+    function updateUI() {
+      updateStats();
+      updateRecentLetters();
+      updateSuratMasuk();
+      updateSuratKeluar();
+      updateDisposisi();
+    }
+
+    function updateStats() {
+      const masuk = suratData.filter(s => s.jenis_surat === 'masuk').length;
+      const keluar = suratData.filter(s => s.jenis_surat === 'keluar').length;
+      const proses = suratData.filter(s => s.status === 'diproses').length;
+      const selesai = suratData.filter(s => s.status === 'selesai').length;
+
+      document.getElementById('stat-masuk').textContent = masuk;
+      document.getElementById('stat-keluar').textContent = keluar;
+      document.getElementById('stat-proses').textContent = proses;
+      document.getElementById('stat-selesai').textContent = selesai;
+    }
+
+    function createSuratCard(surat) {
+      const priorityClass = surat.prioritas === 'tinggi' ? 'priority-high' : 
+                           surat.prioritas === 'sedang' ? 'priority-medium' : 'priority-low';
+      const statusBadge = surat.status === 'baru' ? 'bg-blue-100 text-blue-700' :
+                         surat.status === 'diproses' ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700';
+      const statusText = surat.status === 'baru' ? 'Baru' : 
+                        surat.status === 'diproses' ? 'Diproses' : 'Selesai';
+      const typeIcon = surat.jenis_surat === 'masuk' ? 
+        '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>' :
+        '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>';
+
+      return `
+        <div class="table-row p-4 ${priorityClass} transition-colors" data-id="${surat.__backendId}">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-4">
+              <div class="w-10 h-10 rounded-xl ${surat.jenis_surat === 'masuk' ? 'bg-blue-100' : 'bg-emerald-100'} flex items-center justify-center flex-shrink-0">
+                <svg class="w-5 h-5 ${surat.jenis_surat === 'masuk' ? 'text-blue-600' : 'text-emerald-600'}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  ${typeIcon}
+                </svg>
+              </div>
+              <div class="min-w-0">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="font-semibold text-slate-800 truncate">${escapeHtml(surat.nomor_surat)}</span>
+                  <span class="text-xs font-medium ${statusBadge} px-2 py-0.5 rounded-full flex-shrink-0">${statusText}</span>
+                </div>
+                <p class="text-slate-600 text-sm truncate">${escapeHtml(surat.perihal)}</p>
+                <div class="flex items-center gap-4 mt-1 text-xs text-slate-400">
+                  <span>${surat.jenis_surat === 'masuk' ? 'Dari' : 'Kepada'}: ${escapeHtml(surat.jenis_surat === 'masuk' ? surat.pengirim : surat.penerima)}</span>
+                  <span>${formatDate(surat.tanggal)}</span>
+                </div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2 flex-shrink-0">
+              <button onclick="editSurat('${surat.__backendId}')" class="w-9 h-9 rounded-lg hover:bg-slate-100 flex items-center justify-center transition-colors" title="Edit">
+                <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                </svg>
+              </button>
+              <button onclick="confirmDelete('${surat.__backendId}')" class="w-9 h-9 rounded-lg hover:bg-red-50 flex items-center justify-center transition-colors" title="Hapus">
+                <svg class="w-4 h-4 text-slate-400 hover:text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function updateRecentLetters() {
+      const container = document.getElementById('recent-letters');
+      const recent = [...suratData].sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal)).slice(0, 5);
+      
+      if (recent.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-12 text-slate-400">
+            <svg class="w-16 h-16 mx-auto mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+            </svg>
+            <p class="font-medium">Belum ada surat</p>
+            <p class="text-sm">Klik tombol "Tambah Surat" untuk membuat surat baru</p>
+          </div>
+        `;
+        return;
+      }
+      
+      container.innerHTML = recent.map(createSuratCard).join('');
+    }
+
+    function updateSuratMasuk() {
+      const container = document.getElementById('list-surat-masuk');
+      const masuk = suratData.filter(s => s.jenis_surat === 'masuk');
+      
+      if (masuk.length === 0) {
+        container.innerHTML = '<div class="text-center py-12 text-slate-400"><p class="font-medium">Belum ada surat masuk</p></div>';
+        return;
+      }
+      
+      container.innerHTML = masuk.map(createSuratCard).join('');
+    }
+
+    function updateSuratKeluar() {
+      const container = document.getElementById('list-surat-keluar');
+      const keluar = suratData.filter(s => s.jenis_surat === 'keluar');
+      
+      if (keluar.length === 0) {
+        container.innerHTML = '<div class="text-center py-12 text-slate-400"><p class="font-medium">Belum ada surat keluar</p></div>';
+        return;
+      }
+      
+      container.innerHTML = keluar.map(createSuratCard).join('');
+    }
+
+    function updateDisposisi() {
+      const container = document.getElementById('list-disposisi');
+      const disposisi = suratData.filter(s => s.status === 'diproses');
+      
+      if (disposisi.length === 0) {
+        container.innerHTML = '<div class="text-center py-12 text-slate-400"><p class="font-medium">Belum ada disposisi</p></div>';
+        return;
+      }
+      
+      container.innerHTML = disposisi.map(createSuratCard).join('');
+    }
+
+    // Modal Functions
+    function openModal(type = null) {
+      editingId = null;
+      document.getElementById('surat-form').reset();
+      document.getElementById('surat-id').value = '';
+      document.getElementById('modal-title').textContent = 'Tambah Surat Baru';
+      document.getElementById('tanggal').value = new Date().toISOString().split('T')[0];
+      
+      if (type) {
+        document.getElementById('jenis-surat').value = type;
+      }
+      
+      document.getElementById('modal').classList.remove('hidden');
+      document.getElementById('modal').classList.add('flex');
+    }
+
+    function closeModal() {
+      document.getElementById('modal').classList.add('hidden');
+      document.getElementById('modal').classList.remove('flex');
+      editingId = null;
+    }
+
+    function editSurat(id) {
+      const surat = suratData.find(s => s.__backendId === id);
+      if (!surat) return;
+
+      editingId = id;
+      document.getElementById('surat-id').value = id;
+      document.getElementById('modal-title').textContent = 'Edit Surat';
+      document.getElementById('jenis-surat').value = surat.jenis_surat;
+      document.getElementById('nomor-surat').value = surat.nomor_surat;
+      document.getElementById('perihal').value = surat.perihal;
+      document.getElementById('pengirim').value = surat.pengirim;
+      document.getElementById('penerima').value = surat.penerima;
+      document.getElementById('tanggal').value = surat.tanggal;
+      document.getElementById('prioritas').value = surat.prioritas;
+      document.getElementById('status').value = surat.status;
+      document.getElementById('catatan').value = surat.catatan || '';
+
+      document.getElementById('modal').classList.remove('hidden');
+      document.getElementById('modal').classList.add('flex');
+    }
+
+    function confirmDelete(id) {
+      deleteId = id;
+      document.getElementById('delete-modal').classList.remove('hidden');
+      document.getElementById('delete-modal').classList.add('flex');
+    }
+
+    function closeDeleteModal() {
+      document.getElementById('delete-modal').classList.add('hidden');
+      document.getElementById('delete-modal').classList.remove('flex');
+      deleteId = null;
+    }
+
+    // Form Submit Handler
+    document.getElementById('surat-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      if (currentRecordCount >= 999 && !editingId) {
+        showToast('Batas maksimum 999 surat tercapai', 'error');
+        return;
+      }
+
+      const submitBtn = document.getElementById('submit-btn');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Menyimpan...';
+
+      const formData = {
+        nomor_surat: document.getElementById('nomor-surat').value,
+        jenis_surat: document.getElementById('jenis-surat').value,
+        perihal: document.getElementById('perihal').value,
+        pengirim: document.getElementById('pengirim').value,
+        penerima: document.getElementById('penerima').value,
+        tanggal: document.getElementById('tanggal').value,
+        prioritas: document.getElementById('prioritas').value,
+        status: document.getElementById('status').value,
+        catatan: document.getElementById('catatan').value
+      };
+
+      try {
+        let result;
+        if (editingId) {
+          const existing = suratData.find(s => s.__backendId === editingId);
+          result = await window.dataSdk.update({ ...existing, ...formData });
+        } else {
+          result = await window.dataSdk.create(formData);
         }
 
-        // Initialize on load
-        initializeApp();
-
-        // Helper functions
-        function showLoading() {
-            document.getElementById('loading-overlay').classList.remove('hidden');
+        if (result.isOk) {
+          showToast(editingId ? 'Surat berhasil diperbarui!' : 'Surat berhasil disimpan!');
+          closeModal();
+        } else {
+          showToast('Gagal menyimpan surat', 'error');
         }
+      } catch (error) {
+        showToast('Terjadi kesalahan', 'error');
+      }
 
-        function hideLoading() {
-            document.getElementById('loading-overlay').classList.add('hidden');
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Simpan Surat';
+    });
+
+    // Delete Handler
+    document.getElementById('confirm-delete-btn').addEventListener('click', async () => {
+      if (!deleteId) return;
+
+      const btn = document.getElementById('confirm-delete-btn');
+      btn.disabled = true;
+      btn.textContent = 'Menghapus...';
+
+      const surat = suratData.find(s => s.__backendId === deleteId);
+      if (surat) {
+        const result = await window.dataSdk.delete(surat);
+        if (result.isOk) {
+          showToast('Surat berhasil dihapus!');
+        } else {
+          showToast('Gagal menghapus surat', 'error');
         }
+      }
 
-        function showSuccess(message = '✅ Operasi berjaya!') {
-            const msg = document.getElementById('success-message');
-            msg.textContent = message;
-            msg.classList.remove('hidden');
-            setTimeout(() => msg.classList.add('hidden'), 3000);
-        }
+      btn.disabled = false;
+      btn.textContent = 'Hapus';
+      closeDeleteModal();
+    });
 
-        function showError(elementId, message) {
-            const el = document.getElementById(elementId);
-            el.textContent = message;
-            el.classList.remove('hidden');
-            setTimeout(() => el.classList.add('hidden'), 5000);
-        }
+    // Utility Functions
+    function formatDate(dateStr) {
+      const options = { day: 'numeric', month: 'short', year: 'numeric' };
+      return new Date(dateStr).toLocaleDateString('id-ID', options);
+    }
 
-        // Get data by type
-        function getDataByType(type) {
-            return allData.filter(item => item.type === type);
-        }
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
 
-        // Login/Register Toggle
-        document.getElementById('login-tab').addEventListener('click', () => {
-            document.getElementById('login-tab').classList.add('bg-blue-600', 'text-white');
-            document.getElementById('login-tab').classList.remove('text-gray-600');
-            document.getElementById('register-tab').classList.remove('bg-blue-600', 'text-white');
-            document.getElementById('register-tab').classList.add('text-gray-600');
-            document.getElementById('login-form-container').classList.remove('hidden');
-            document.getElementById('register-form-container').classList.add('hidden');
-        });
-
-        document.getElementById('register-tab').addEventListener('click', () => {
-            document.getElementById('register-tab').classList.add('bg-blue-600', 'text-white');
-            document.getElementById('register-tab').classList.remove('text-gray-600');
-            document.getElementById('login-tab').classList.remove('bg-blue-600', 'text-white');
-            document.getElementById('login-tab').classList.add('text-gray-600');
-            document.getElementById('register-form-container').classList.remove('hidden');
-            document.getElementById('login-form-container').classList.add('hidden');
-        });
-
-        // Login
-        document.getElementById('login-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            showLoading();
-            
-            const email = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            
-            const users = getDataByType('user');
-            const user = users.find(u => u.userEmail === email && u.userPassword === password);
-            
-            hideLoading();
-            
-            if (user) {
-                currentUser = user;
-                document.getElementById('login-section').classList.add('hidden');
-                document.getElementById('main-app').classList.remove('hidden');
-                document.getElementById('current-user-display').textContent = user.userName;
-                document.getElementById('current-role-display').textContent = user.userRole;
-                document.getElementById('employee-name').value = user.userName;
-                document.getElementById('employee-sector').value = user.userSector;
-                updateUI();
-            } else {
-                showError('login-error', '❌ Email atau kata laluan tidak sah!');
-            }
-        });
-
-        // Register
-        document.getElementById('register-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            showLoading();
-            
-            const name = document.getElementById('reg-fullname').value;
-            const email = document.getElementById('reg-email').value;
-            const sector = document.getElementById('reg-sector').value;
-            const password = document.getElementById('reg-password').value;
-            const confirmPassword = document.getElementById('reg-confirm-password').value;
-            
-            if (password !== confirmPassword) {
-                hideLoading();
-                showError('register-error', '❌ Kata laluan tidak sepadan!');
-                return;
-            }
-            
-            const users = getDataByType('user');
-            if (users.some(u => u.userEmail === email)) {
-                hideLoading();
-                showError('register-error', '❌ Email sudah digunakan!');
-                return;
-            }
-            
-            // Check if user is Shafik Azizi for admin role
-            const userRole = (name === 'Shafik Azizi') ? 'Admin' : 'Pegawai';
-            
-            const result = await window.dataSdk.create({
-                type: 'user',
-                userId: Date.now().toString(),
-                userName: name,
-                userEmail: email,
-                userSector: sector,
-                userRole: userRole,
-                userPassword: password,
-                userStatus: 'Aktif',
-                createdAt: new Date().toISOString(),
-                bookingStartDate: null,
-                bookingStartTime: null,
-                bookingEndDate: null,
-                bookingEndTime: null,
-                bookingPurpose: null,
-                bookingStatus: null,
-                bookingVehicle: null,
-                bookingDriver: null,
-                bookingApprovedBy: null,
-                bookingApprovedAt: null,
-                vehicleBrand: null,
-                vehicleModel: null,
-                vehiclePlate: null,
-                vehicleYear: null,
-                vehicleStatus: null,
-                driverName: null,
-                driverIC: null,
-                driverLicense: null,
-                driverStatus: null
-            });
-            
-            hideLoading();
-            
-            if (result.isOk) {
-                document.getElementById('register-success').classList.remove('hidden');
-                setTimeout(() => {
-                    document.getElementById('register-success').classList.add('hidden');
-                    document.getElementById('login-tab').click();
-                }, 2000);
-                document.getElementById('register-form').reset();
-            } else {
-                showError('register-error', '❌ Pendaftaran gagal. Sila cuba lagi.');
-            }
-        });
-
-        // Logout
-        document.getElementById('logout-btn').addEventListener('click', () => {
-            currentUser = null;
-            document.getElementById('main-app').classList.add('hidden');
-            document.getElementById('login-section').classList.remove('hidden');
-            document.getElementById('login-form').reset();
-        });
-
-        // Navigation
-        const tabs = ['booking', 'tracking', 'schedule', 'history', 'approval', 'users', 'drivers', 'vehicles', 'analytics'];
-        tabs.forEach(tab => {
-            document.getElementById(`tab-${tab}`).addEventListener('click', () => {
-                tabs.forEach(t => {
-                    document.getElementById(`${t}-section`).classList.add('hidden');
-                    document.getElementById(`tab-${t}`).classList.remove('bg-blue-600', 'text-white');
-                    document.getElementById(`tab-${t}`).classList.add('text-gray-600');
-                });
-                document.getElementById(`${tab}-section`).classList.remove('hidden');
-                document.getElementById(`tab-${tab}`).classList.add('bg-blue-600', 'text-white');
-                document.getElementById(`tab-${tab}`).classList.remove('text-gray-600');
-            });
-        });
-
-        // Booking Form
-        document.getElementById('booking-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            showLoading();
-            
-            const result = await window.dataSdk.create({
-                type: 'booking',
-                userId: currentUser.userId,
-                userName: currentUser.userName,
-                userEmail: currentUser.userEmail,
-                userSector: currentUser.userSector,
-                userRole: currentUser.userRole,
-                userPassword: null,
-                userStatus: null,
-                bookingStartDate: document.getElementById('start-date').value,
-                bookingStartTime: document.getElementById('start-time').value,
-                bookingEndDate: document.getElementById('end-date').value,
-                bookingEndTime: document.getElementById('end-time').value,
-                bookingPurpose: document.getElementById('purpose').value,
-                bookingStatus: 'Menunggu',
-                bookingVehicle: null,
-                bookingDriver: null,
-                bookingApprovedBy: null,
-                bookingApprovedAt: null,
-                vehicleBrand: null,
-                vehicleModel: null,
-                vehiclePlate: null,
-                vehicleYear: null,
-                vehicleStatus: null,
-                driverName: null,
-                driverIC: null,
-                driverLicense: null,
-                driverStatus: null,
-                createdAt: new Date().toISOString()
-            });
-            
-            hideLoading();
-            
-            if (result.isOk) {
-                document.getElementById('booking-form').reset();
-                document.getElementById('employee-name').value = currentUser.userName;
-                document.getElementById('employee-sector').value = currentUser.userSector;
-                showSuccess('✅ Tempahan berjaya dihantar!');
-            } else {
-                showError('login-error', '❌ Tempahan gagal. Sila cuba lagi.');
-            }
-        });
-
-        // Add Driver
-        document.getElementById('add-driver-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            showLoading();
-            
-            const result = await window.dataSdk.create({
-                type: 'driver',
-                userId: null,
-                userName: null,
-                userEmail: null,
-                userSector: null,
-                userRole: null,
-                userPassword: null,
-                userStatus: null,
-                bookingStartDate: null,
-                bookingStartTime: null,
-                bookingEndDate: null,
-                bookingEndTime: null,
-                bookingPurpose: null,
-                bookingStatus: null,
-                bookingVehicle: null,
-                bookingDriver: null,
-                bookingApprovedBy: null,
-                bookingApprovedAt: null,
-                vehicleBrand: null,
-                vehicleModel: null,
-                vehiclePlate: null,
-                vehicleYear: null,
-                vehicleStatus: null,
-                driverName: document.getElementById('driver-name').value,
-                driverIC: document.getElementById('driver-ic').value,
-                driverLicense: document.getElementById('driver-license').value,
-                driverStatus: 'Aktif',
-                createdAt: new Date().toISOString()
-            });
-            
-            hideLoading();
-            
-            if (result.isOk) {
-                document.getElementById('add-driver-form').reset();
-                showSuccess('✅ Pemandu berjaya ditambah!');
-            } else {
-                showSuccess('❌ Gagal menambah pemandu');
-            }
-        });
-
-        // Add Vehicle
-        document.getElementById('add-vehicle-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            showLoading();
-            
-            const result = await window.dataSdk.create({
-                type: 'vehicle',
-                userId: null,
-                userName: null,
-                userEmail: null,
-                userSector: null,
-                userRole: null,
-                userPassword: null,
-                userStatus: null,
-                bookingStartDate: null,
-                bookingStartTime: null,
-                bookingEndDate: null,
-                bookingEndTime: null,
-                bookingPurpose: null,
-                bookingStatus: null,
-                bookingVehicle: null,
-                bookingDriver: null,
-                bookingApprovedBy: null,
-                bookingApprovedAt: null,
-                vehicleBrand: document.getElementById('vehicle-brand').value,
-                vehicleModel: document.getElementById('vehicle-model').value,
-                vehiclePlate: document.getElementById('vehicle-plate').value,
-                vehicleYear: document.getElementById('vehicle-year').value,
-                vehicleStatus: 'Tersedia',
-                driverName: null,
-                driverIC: null,
-                driverLicense: null,
-                driverStatus: null,
-                createdAt: new Date().toISOString()
-            });
-            
-            hideLoading();
-            
-            if (result.isOk) {
-                document.getElementById('add-vehicle-form').reset();
-                showSuccess('✅ Kenderaan berjaya ditambah!');
-            } else {
-                showSuccess('❌ Gagal menambah kenderaan');
-            }
-        });
-
-        // Approve/Reject Booking
-        window.approveBooking = async function(backendId, vehiclePlate, driverName) {
-            const booking = allData.find(b => b.__backendId === backendId);
-            if (!booking) return;
-            
-            if (!vehiclePlate || !driverName) {
-                showSuccess('⚠️ Sila pilih kenderaan dan pemandu terlebih dahulu');
-                return;
-            }
-            
-            showLoading();
-            
-            const updated = {
-                ...booking,
-                bookingStatus: 'Diluluskan',
-                bookingVehicle: vehiclePlate,
-                bookingDriver: driverName,
-                bookingApprovedBy: currentUser.userName,
-                bookingApprovedAt: new Date().toISOString()
-            };
-            
-            const result = await window.dataSdk.update(updated);
-            hideLoading();
-            
-            if (result.isOk) {
-                showSuccess('✅ Tempahan diluluskan!');
-            } else {
-                showSuccess('❌ Gagal meluluskan tempahan');
-            }
-        };
-
-        window.rejectBooking = async function(backendId) {
-            const booking = allData.find(b => b.__backendId === backendId);
-            if (!booking) return;
-            
-            showLoading();
-            
-            const updated = {
-                ...booking,
-                bookingStatus: 'Ditolak',
-                bookingApprovedBy: currentUser.userName,
-                bookingApprovedAt: new Date().toISOString()
-            };
-            
-            const result = await window.dataSdk.update(updated);
-            hideLoading();
-            
-            if (result.isOk) {
-                showSuccess('✅ Tempahan ditolak');
-            } else {
-                showSuccess('❌ Gagal menolak tempahan');
-            }
-        };
-
-        // Update All Views
-        function updateAllViews() {
-            updateTracking();
-            updateHistory();
-            updateApproval();
-            updateUsers();
-            updateDrivers();
-            updateVehicles();
-            updateAnalytics();
-        }
-
-        function updateTracking() {
-            const vehicles = getDataByType('vehicle');
-            const bookings = getDataByType('booking');
-            
-            const grid = document.getElementById('car-status-grid');
-            grid.innerHTML = vehicles.map(v => {
-                const activeBooking = bookings.find(b => 
-                    b.bookingVehicle === v.vehiclePlate && 
-                    b.bookingStatus === 'Diluluskan' &&
-                    new Date(b.bookingStartDate) <= new Date() &&
-                    new Date(b.bookingEndDate) >= new Date()
-                );
-                
-                const status = activeBooking ? 'Sedang Digunakan' : 'Tersedia';
-                
-                return `
-                    <div class="bg-white border-2 border-gray-200 rounded-lg p-4">
-                        <div class="text-2xl mb-2">🚗</div>
-                        <h3 class="font-semibold text-gray-800">${v.vehicleBrand} ${v.vehicleModel}</h3>
-                        <p class="text-sm text-gray-600">${v.vehiclePlate}</p>
-                        <span class="status-badge ${status === 'Tersedia' ? 'status-active' : 'status-in-use'} mt-2">
-                            ${status}
-                        </span>
-                        ${activeBooking ? `<p class="text-xs text-gray-500 mt-2">Dipinjam: ${activeBooking.userName}</p>` : ''}
-                    </div>
-                `;
-            }).join('') || '<p class="text-gray-500 col-span-4 text-center py-8">Tiada kenderaan didaftarkan</p>';
-        }
-
-        function updateHistory() {
-            const bookings = getDataByType('booking').filter(b => 
-                b.bookingStatus === 'Diluluskan' || b.bookingStatus === 'Ditolak'
-            );
-            
-            const tbody = document.getElementById('history-table-body');
-            tbody.innerHTML = bookings.map(b => `
-                <tr class="border-b hover:bg-gray-50">
-                    <td class="px-4 py-3 text-sm">${b.userName}</td>
-                    <td class="px-4 py-3 text-sm">${b.bookingVehicle || '-'}</td>
-                    <td class="px-4 py-3 text-sm">${b.bookingStartDate}</td>
-                    <td class="px-4 py-3 text-sm">
-                        <span class="status-badge ${b.bookingStatus === 'Diluluskan' ? 'status-approved' : 'status-rejected'}">
-                            ${b.bookingStatus}
-                        </span>
-                    </td>
-                    <td class="px-4 py-3 text-sm">${b.bookingPurpose}</td>
-                </tr>
-            `).join('') || '<tr><td colspan="5" class="px-4 py-8 text-center text-gray-500">Tiada rekod</td></tr>';
-        }
-
-        function updateApproval() {
-            const bookings = getDataByType('booking').filter(b => b.bookingStatus === 'Menunggu');
-            const vehicles = getDataByType('vehicle');
-            const drivers = getDataByType('driver');
-            
-            const tbody = document.getElementById('approval-table-body');
-            tbody.innerHTML = bookings.map(b => `
-                <tr class="border-b hover:bg-gray-50">
-                    <td class="px-4 py-3 text-sm">${b.userName}</td>
-                    <td class="px-4 py-3 text-sm">${b.bookingStartDate} ${b.bookingStartTime}</td>
-                    <td class="px-4 py-3 text-sm">${b.bookingPurpose}</td>
-                    <td class="px-4 py-3 text-sm no-print">
-                        <select id="vehicle-${b.__backendId}" class="px-2 py-1 border rounded text-xs">
-                            <option value="">Pilih kenderaan...</option>
-                            ${vehicles.map(v => `<option value="${v.vehiclePlate}">${v.vehicleBrand} ${v.vehicleModel} (${v.vehiclePlate})</option>`).join('')}
-                        </select>
-                    </td>
-                    <td class="px-4 py-3 text-sm no-print">
-                        <select id="driver-${b.__backendId}" class="px-2 py-1 border rounded text-xs">
-                            <option value="">Pilih pemandu...</option>
-                            ${drivers.map(d => `<option value="${d.driverName}">${d.driverName}</option>`).join('')}
-                        </select>
-                    </td>
-                    <td class="px-4 py-3 text-sm no-print">
-                        <button onclick="approveBooking('${b.__backendId}', document.getElementById('vehicle-${b.__backendId}').value, document.getElementById('driver-${b.__backendId}').value)" class="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 text-xs mr-2">
-                            ✅ Lulus
-                        </button>
-                        <button onclick="rejectBooking('${b.__backendId}')" class="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 text-xs">
-                            ❌ Tolak
-                        </button>
-                    </td>
-                </tr>
-            `).join('') || '<tr><td colspan="6" class="px-4 py-8 text-center text-gray-500">Tiada tempahan menunggu kelulusan</td></tr>';
-        }
-
-        function updateUsers() {
-            const users = getDataByType('user');
-            const tbody = document.getElementById('users-table-body');
-            tbody.innerHTML = users.map(u => `
-                <tr class="border-b hover:bg-gray-50">
-                    <td class="px-4 py-3 text-sm">${u.userName}</td>
-                    <td class="px-4 py-3 text-sm">${u.userEmail}</td>
-                    <td class="px-4 py-3 text-sm">${u.userSector}</td>
-                    <td class="px-4 py-3 text-sm">${u.userRole}</td>
-                    <td class="px-4 py-3 text-sm">
-                        <span class="status-badge status-active">${u.userStatus}</span>
-                    </td>
-                </tr>
-            `).join('') || '<tr><td colspan="5" class="px-4 py-8 text-center text-gray-500">Tiada pengguna</td></tr>';
-        }
-
-        function updateDrivers() {
-            const drivers = getDataByType('driver');
-            const tbody = document.getElementById('drivers-table-body');
-            tbody.innerHTML = drivers.map(d => `
-                <tr class="border-b hover:bg-gray-50">
-                    <td class="px-4 py-3 text-sm">${d.driverName}</td>
-                    <td class="px-4 py-3 text-sm">${d.driverIC}</td>
-                    <td class="px-4 py-3 text-sm">${d.driverLicense}</td>
-                    <td class="px-4 py-3 text-sm">
-                        <span class="status-badge status-active">${d.driverStatus}</span>
-                    </td>
-                </tr>
-            `).join('') || '<tr><td colspan="4" class="px-4 py-8 text-center text-gray-500">Tiada pemandu</td></tr>';
-        }
-
-        function updateVehicles() {
-            const vehicles = getDataByType('vehicle');
-            const tbody = document.getElementById('vehicles-table-body');
-            tbody.innerHTML = vehicles.map(v => `
-                <tr class="border-b hover:bg-gray-50">
-                    <td class="px-4 py-3 text-sm">${v.vehicleBrand} ${v.vehicleModel}</td>
-                    <td class="px-4 py-3 text-sm">${v.vehiclePlate}</td>
-                    <td class="px-4 py-3 text-sm">${v.vehicleYear}</td>
-                    <td class="px-4 py-3 text-sm">
-                        <span class="status-badge status-active">${v.vehicleStatus}</span>
-                    </td>
-                </tr>
-            `).join('') || '<tr><td colspan="4" class="px-4 py-8 text-center text-gray-500">Tiada kenderaan</td></tr>';
-        }
-
-        function updateAnalytics() {
-            const bookings = getDataByType('booking');
-            const pending = bookings.filter(b => b.bookingStatus === 'Menunggu');
-            const completed = bookings.filter(b => b.bookingStatus === 'Diluluskan');
-            
-            document.getElementById('total-bookings').textContent = bookings.length;
-            document.getElementById('completed-bookings').textContent = completed.length;
-            document.getElementById('pending-bookings').textContent = pending.length;
-            
-            // Most popular vehicle
-            const vehicleCount = {};
-            completed.forEach(b => {
-                if (b.bookingVehicle) {
-                    vehicleCount[b.bookingVehicle] = (vehicleCount[b.bookingVehicle] || 0) + 1;
-                }
-            });
-            
-            const mostPopular = Object.keys(vehicleCount).length > 0 
-                ? Object.keys(vehicleCount).reduce((a, b) => vehicleCount[a] > vehicleCount[b] ? a : b)
-                : '-';
-            
-            document.getElementById('most-popular').textContent = mostPopular;
-            
-            // Chart
-            const ctx = document.getElementById('usage-chart');
-            if (ctx) {
-                if (usageChart) {
-                    usageChart.destroy();
-                }
-                
-                const monthCounts = new Array(12).fill(0);
-                bookings.forEach(b => {
-                    if (b.bookingStartDate) {
-                        const month = new Date(b.bookingStartDate).getMonth();
-                        monthCounts[month]++;
-                    }
-                });
-                
-                usageChart = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Ogos', 'Sep', 'Okt', 'Nov', 'Dis'],
-                        datasets: [{
-                            label: 'Tempahan',
-                            data: monthCounts,
-                            backgroundColor: '#3b82f6'
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                ticks: {
-                                    stepSize: 1
-                                }
-                            }
-                        }
-                    }
-                });
-            }
-        }
-
-        function updateUI() {
-            if (currentUser && (currentUser.userRole !== 'Admin' && currentUser.userRole !== 'Pengurus')) {
-                document.getElementById('tab-approval').style.display = 'none';
-                document.getElementById('tab-users').style.display = 'none';
-                document.getElementById('tab-drivers').style.display = 'none';
-                document.getElementById('tab-vehicles').style.display = 'none';
-                document.getElementById('tab-analytics').style.display = 'none';
-            }
-        }
-    </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d9eb8af3104e41e',t:'MTc3MzEwNzk4MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+    function showToast(message, type = 'success') {
+      const toast = document.getElementById('toast');
+      const icon = document.getElementById('toast-icon');
+      const msg = document.getElementById('toast-message');
+      
+      msg.textContent = message;
+      
+      if (type === 'error') {
+        icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>';
+        icon.classList.remove('text-emerald-400');
+        icon.classList.add('text-red-400');
+      } else {
+        icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>';
+        icon.classList.remove('text-red-400');
+        icon.classList.add('text-emerald-400');
+      }
+      
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      
+      setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0');
+      }, 3000);
+    }
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d9ef313d02011c9',t:'MTc3MzExMDM3Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
